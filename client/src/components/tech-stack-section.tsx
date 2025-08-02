@@ -171,31 +171,31 @@ export function TechStackSection() {
             <h3 className="text-xl md:text-2xl font-semibold text-center text-gray-300">
               {techStacks[activeTab].category} Technologies
             </h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto">
               {techStacks[activeTab].technologies.map((tech, index) => {
                 const IconComponent = tech.icon;
                 return (
                   <div
                     key={tech.name}
-                    className="group relative bg-gray-800/30 backdrop-blur-sm rounded-lg p-6 border border-gray-700/50
+                    className="group relative bg-gray-800/30 backdrop-blur-sm rounded-lg p-3 sm:p-6 border border-gray-700/50
                              transition-all duration-300 hover:bg-gray-700/40 hover:border-gray-500/70 
                              cursor-pointer animate-fade-in aspect-square flex flex-col items-center justify-center text-center
-                             min-h-[140px] max-w-[200px] mx-auto"
+                             min-h-[120px] sm:min-h-[140px] max-w-[160px] sm:max-w-[200px] mx-auto"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
                     {/* Icon */}
-                    <div className="flex-shrink-0 transition-transform duration-300 group-hover:scale-110 mb-3">
-                      <IconComponent className={`w-10 h-10 md:w-12 md:h-12 ${tech.color}`} />
+                    <div className="flex-shrink-0 transition-transform duration-300 group-hover:scale-110 mb-2 sm:mb-3">
+                      <IconComponent className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 ${tech.color}`} />
                     </div>
                     
                     {/* Technology Info */}
                     <div className="flex-1 flex flex-col justify-center">
                       <h4 className="font-medium text-gray-200 group-hover:text-white 
-                                   transition-colors duration-300 text-sm md:text-base mb-1 leading-tight">
+                                   transition-colors duration-300 text-xs sm:text-sm md:text-base mb-1 leading-tight">
                         {tech.name}
                       </h4>
                       <p className="text-xs text-gray-400 group-hover:text-gray-300 
-                                   transition-colors duration-300 line-clamp-2 leading-tight">
+                                   transition-colors duration-300 line-clamp-2 leading-tight hidden sm:block">
                         {tech.description}
                       </p>
                     </div>
