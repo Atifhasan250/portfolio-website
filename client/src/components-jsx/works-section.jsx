@@ -143,20 +143,6 @@ export default function WorksSection() {
             ))}
           </div>
         </div>
-
-        {/* Page Indicators */}
-        <div className="flex justify-center mt-8 space-x-2">
-          {allProjects.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentIndex(index)}
-              className={`w-3 h-3 rounded-full transition-colors duration-300 ${
-                currentIndex === index ? 'bg-white' : 'bg-gray-600'
-              }`}
-              aria-label={`Go to project ${index + 1}`}
-            />
-          ))}
-        </div>
       </div>
     </section>
   );
