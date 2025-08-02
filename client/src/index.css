@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(215, 25%, 27%);
+  --muted: hsl(210, 40%, 98%);
+  --muted-foreground: hsl(215, 16%, 47%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(215, 25%, 27%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(215, 25%, 27%);
+  --border: hsl(214, 32%, 91%);
+  --input: hsl(214, 32%, 91%);
+  --primary: hsl(221, 83%, 53%);
+  --primary-foreground: hsl(210, 40%, 98%);
+  --secondary: hsl(210, 40%, 96%);
+  --secondary-foreground: hsl(215, 25%, 27%);
+  --accent: hsl(210, 40%, 96%);
+  --accent-foreground: hsl(215, 25%, 27%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(210, 40%, 98%);
+  --ring: hsl(215, 25%, 27%);
+  --radius: 0.5rem;
+  
+  /* Portfolio specific colors */
+  --portfolio-blue: hsl(221, 83%, 53%);
+  --portfolio-slate: hsl(215, 16%, 47%);
+  --portfolio-amber: hsl(43, 96%, 56%);
+}
+
+.dark {
+  --background: hsl(222, 84%, 5%);
+  --foreground: hsl(210, 40%, 98%);
+  --muted: hsl(217, 33%, 17%);
+  --muted-foreground: hsl(215, 20%, 65%);
+  --popover: hsl(222, 84%, 5%);
+  --popover-foreground: hsl(210, 40%, 98%);
+  --card: hsl(222, 84%, 5%);
+  --card-foreground: hsl(210, 40%, 98%);
+  --border: hsl(217, 33%, 17%);
+  --input: hsl(217, 33%, 17%);
+  --primary: hsl(221, 83%, 53%);
+  --primary-foreground: hsl(210, 40%, 98%);
+  --secondary: hsl(217, 33%, 17%);
+  --secondary-foreground: hsl(210, 40%, 98%);
+  --accent: hsl(217, 33%, 17%);
+  --accent-foreground: hsl(210, 40%, 98%);
+  --destructive: hsl(0, 63%, 31%);
+  --destructive-foreground: hsl(210, 40%, 98%);
+  --ring: hsl(212, 12%, 84%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .portfolio-blue {
+    color: hsl(221, 83%, 53%);
+  }
+  
+  .bg-portfolio-blue {
+    background-color: hsl(221, 83%, 53%);
+  }
+  
+  .portfolio-slate {
+    color: hsl(215, 16%, 47%);
+  }
+  
+  .bg-portfolio-slate {
+    background-color: hsl(215, 16%, 47%);
+  }
+  
+  .portfolio-amber {
+    color: hsl(43, 96%, 56%);
+  }
+  
+  .bg-portfolio-amber {
+    background-color: hsl(43, 96%, 56%);
+  }
+  
+  .text-portfolio-blue {
+    color: hsl(221, 83%, 53%);
+  }
+  
+  .text-portfolio-slate {
+    color: hsl(215, 16%, 47%);
+  }
+  
+  .text-portfolio-amber {
+    color: hsl(43, 96%, 56%);
+  }
+  
+  .border-portfolio-blue {
+    border-color: hsl(221, 83%, 53%);
+  }
+  
+  .hover\:bg-portfolio-blue:hover {
+    background-color: hsl(221, 83%, 53%);
+  }
+  
+  .hover\:text-portfolio-blue:hover {
+    color: hsl(221, 83%, 53%);
+  }
+  
+  .focus\:ring-portfolio-blue:focus {
+    --tw-ring-color: hsl(221, 83%, 53%);
+  }
+  
+  .focus\:border-portfolio-blue:focus {
+    border-color: hsl(221, 83%, 53%);
+  }
+}
