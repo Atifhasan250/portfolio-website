@@ -7,7 +7,12 @@ This is Atif Hasan's personal React portfolio website application built with Rea
 - Added Google Fonts (Poppins and Montserrat) to support custom typography
 - Fixed social icon visibility by changing from gray-400 to gray-300 for better contrast
 - Updated WhatsApp number to +8801754020488 in about section
-- Preserved all original styling, content, and functionality without modifications
+- Reordered sections: moved projects after about and before services
+- Added tech stack section after services with tabbed interface
+- Implemented nav-style tech cards with real SVG logos for all technologies
+- Added database category with MySQL and MongoDB
+- Used horizontal card layout with glassmorphism styling and hover effects
+- Technologies organized by Frontend, Backend, Database, and Design categories
 
 # User Preferences
 

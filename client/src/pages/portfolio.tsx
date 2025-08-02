@@ -20,8 +20,8 @@ export default function Portfolio() {
         <HeroSection />
         <AboutSection />
         <WorksSection />
-        <TechStackSection />
         <ServicesSection />
+        <TechStackSection />
         
         {/* Testimonials Section */}
         <TestimonialsSection />
