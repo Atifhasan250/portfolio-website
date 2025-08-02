@@ -11,10 +11,8 @@ export function TechStackSection() {
           name: "TypeScript", 
           svg: (
             <svg viewBox="0 0 24 24" className="w-8 h-8">
-              <rect width="24" height="24" rx="5" fill="#3178C6"/>
-              <path d="M9.5 15.5v-3H7v3h2.5zm5.5 0v-3h-2v3h2zm-3-4v-3H9v3h3zm3 0v-3h-3v3h3z" fill="white"/>
-              <path d="M19.24 7.73v8.54c0 .39-.32.71-.71.71H5.47c-.39 0-.71-.32-.71-.71V7.73c0-.39.32-.71.71-.71h12.06c.39 0 .71.32.71.71z" fill="#3178C6"/>
-              <path d="M15.84 15.85c.24-.13.35-.29.35-.48 0-.14-.06-.27-.17-.37-.1-.1-.24-.15-.4-.15-.14 0-.27.04-.37.12-.1.08-.18.18-.24.3l-.43-.25c.08-.16.19-.3.33-.41.14-.11.32-.17.53-.17.21 0 .39.05.54.16.15.1.26.25.32.42.06.17.09.35.09.54 0 .31-.1.57-.29.78-.19.21-.45.37-.77.47v.05c.36.08.65.23.86.45.21.22.32.5.32.82 0 .22-.04.42-.13.6-.09.18-.21.33-.37.45-.16.12-.35.21-.56.27-.21.06-.43.09-.67.09-.28 0-.54-.05-.77-.14-.23-.09-.43-.22-.58-.39-.15-.17-.26-.37-.32-.6l.46-.19c.05.17.12.31.22.42.1.11.22.19.36.25.14.06.29.09.45.09.18 0 .34-.03.49-.1.15-.07.27-.16.36-.28.09-.12.13-.26.13-.42 0-.2-.06-.37-.17-.5-.11-.13-.26-.23-.45-.29-.19-.06-.4-.09-.63-.09h-.24v-.42h.24c.2 0 .38-.02.54-.07.16-.05.29-.12.39-.22.1-.1.15-.23.15-.38z" fill="white"/>
+              <rect width="24" height="24" rx="3" fill="#3178C6"/>
+              <path d="M15.5 17.5h1.8v-1.2h-1.8v-2.1h2.4v-1.2h-3.6v5.7h1.2v-1.2zm-4.8-4.5v1.2h1.8v3.3h1.2v-3.3h1.8v-1.2h-4.8z" fill="white"/>
             </svg>
           ),
           description: "Type-safe JavaScript"
@@ -215,7 +213,7 @@ export function TechStackSection() {
                 key={tech.name}
                 className="group relative bg-gray-800/30 backdrop-blur-sm rounded-lg p-4 border border-gray-700/50
                          transition-all duration-300 hover:bg-gray-700/40 hover:border-gray-500/70 
-                         cursor-pointer animate-fade-in nav-link"
+                         cursor-pointer animate-fade-in"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 {/* Icon and Name - Horizontal Layout */}
