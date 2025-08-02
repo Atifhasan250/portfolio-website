@@ -81,6 +81,13 @@ Download and install these before starting:
 **Problem: "npm is not recognized"**
 - Solution: Node.js is not installed or not in PATH. Reinstall Node.js from nodejs.org
 
+**Problem: "NODE_ENV is not recognized" (Windows)**
+- Solution 1: Double-click the `start-windows.bat` file in your project folder
+- Solution 2: Use the manual command:
+  ```cmd
+  set NODE_ENV=development && npx tsx server/index.ts
+  ```
+
 **Problem: "Port 5000 is already in use"**
 - Solution: The server will automatically use the next available port (like 5001). Check terminal output for the actual port number.
 

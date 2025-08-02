@@ -51,10 +51,33 @@
    ```
 
 ### Step 5: Start the Development Server
-1. In the terminal, run:
-   ```bash
-   npm run dev
-   ```
+
+#### Option 1: Use the Windows Batch Files (Easiest for Windows)
+**For Windows Command Prompt users:**
+- Double-click `start-windows.bat` file in your project folder
+- Or in VS Code terminal, run: `start-windows.bat`
+
+**For Windows PowerShell users:**
+- Right-click `start-windows.ps1` → "Run with PowerShell"
+- Or in VS Code terminal, run: `./start-windows.ps1`
+
+#### Option 2: Manual Commands
+**Windows Command Prompt:**
+```cmd
+set NODE_ENV=development && npx tsx server/index.ts
+```
+
+**Windows PowerShell:**
+```powershell
+$env:NODE_ENV="development"; npx tsx server/index.ts
+```
+
+**Mac/Linux:**
+```bash
+npm run dev
+```
+
+#### All Users:
 2. You should see output like:
    ```
    9:12:30 AM [express] serving on port 5000
@@ -98,7 +121,11 @@ Your contact form is already configured with Formspree. Messages will be sent to
 ### If the server won't start:
 1. Make sure Node.js is installed: `node --version`
 2. Make sure you're in the correct directory
-3. Try: `npm run dev`
+3. **Windows users**: Try the manual command:
+   ```cmd
+   set NODE_ENV=development && npx tsx server/index.ts
+   ```
+4. **Mac/Linux users**: Try: `npm run dev`
 
 ### If changes don't appear:
 1. Check the terminal for errors

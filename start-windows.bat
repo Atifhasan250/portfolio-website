@@ -1,0 +1,9 @@
+@echo off
+echo Starting Atif Hasan Portfolio...
+echo.
+echo Installing dependencies (if needed)...
+npm install
+echo.
+echo Starting development server...
+set NODE_ENV=development && npx tsx server/index.ts
+pause
