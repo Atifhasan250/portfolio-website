@@ -1,6 +1,13 @@
 # Overview
 
-This is a full-stack portfolio website application built with React, Express, TypeScript, and PostgreSQL. The application features a personal portfolio showcasing skills, projects, and an about section, along with a contact form that allows visitors to send messages. The backend provides API endpoints for handling contact form submissions and retrieving stored contact data.
+This is Atif Hasan's personal React portfolio website application built with React, Express, TypeScript, and PostgreSQL. The application features a dark-themed portfolio showcasing skills, projects, about section, services, testimonials, and contact information. The portfolio includes custom glassmorphism styling, Google Fonts (Poppins and Montserrat), and authentic personal content including social media links, contact details from Bogura, Bangladesh.
+
+## Recent Changes (August 2, 2025)
+- Extracted and implemented original React portfolio code from user's zip file exactly as provided
+- Added Google Fonts (Poppins and Montserrat) to support custom typography
+- Fixed social icon visibility by changing from gray-400 to gray-300 for better contrast
+- Updated WhatsApp number to +8801754020488 in about section
+- Preserved all original styling, content, and functionality without modifications
 
 # User Preferences
 
