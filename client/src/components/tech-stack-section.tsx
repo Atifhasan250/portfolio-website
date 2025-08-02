@@ -192,7 +192,7 @@ export function TechStackSection() {
                 onClick={() => setActiveTab(index)}
                 className={`px-6 py-3 rounded-full transition-all duration-300 ${
                   index === activeTab 
-                    ? 'bg-blue-600 text-white shadow-lg' 
+                    ? 'bg-white text-black shadow-lg' 
                     : 'text-gray-400 hover:text-white hover:bg-gray-700'
                 }`}
               >
