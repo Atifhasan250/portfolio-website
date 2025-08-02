@@ -13,6 +13,10 @@ This is Atif Hasan's personal React portfolio website application built with Rea
 - Added database category with MySQL and MongoDB
 - Used horizontal card layout with glassmorphism styling and hover effects
 - Technologies organized by Frontend, Backend, Database, and Design categories
+- Created custom diamond-style logomark and favicon matching user's design reference
+- Fixed mobile card overlapping issues in tech stack section
+- Added Windows compatibility with batch files for local development
+- Configured project for Vercel deployment with vercel.json and deployment guide
 
 # User Preferences
 
