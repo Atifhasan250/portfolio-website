@@ -1,0 +1,27 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#E5E7EB;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#9CA3AF;stop-opacity:0.8" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="32" height="32" fill="#111827" rx="4"/>
+  
+  <!-- Diamond/Star shaped logomark centered -->
+  <g transform="translate(16, 16)">
+    <!-- Top diamond -->
+    <path d="M0 -10 L5 -4 L0 2 L-5 -4 Z" fill="url(#logoGradient)" opacity="0.95"/>
+    <!-- Right diamond -->
+    <path d="M10 0 L4 5 L-2 0 L4 -5 Z" fill="url(#logoGradient)" opacity="0.8"/>
+    <!-- Bottom diamond -->
+    <path d="M0 10 L-5 4 L0 -2 L5 4 Z" fill="url(#logoGradient)" opacity="0.95"/>
+    <!-- Left diamond -->
+    <path d="M-10 0 L-4 -5 L2 0 L-4 5 Z" fill="url(#logoGradient)" opacity="0.8"/>
+    
+    <!-- Inner highlight -->
+    <circle cx="0" cy="0" r="2" fill="#FFFFFF" opacity="0.3"/>
+  </g>
+</svg>
