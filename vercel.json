@@ -3,9 +3,13 @@
   "builds": [
     {
       "src": "server/index.ts",
-      "use": "@vercel/node",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "dist/**/*",
+      "use": "@vercel/static-build",
       "config": {
-        "includeFiles": ["dist/**"]
+        "distDir": "dist"
       }
     }
   ],
@@ -20,6 +24,5 @@
     }
   ],
   "installCommand": "npm install",
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist"
+  "buildCommand": "npm run build"
 }
