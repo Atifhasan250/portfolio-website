@@ -2,15 +2,12 @@
   "version": 2,
   "builds": [
     {
-      "src": "server/index.ts",
-      "use": "@vercel/node"
+      "src": "client/dist/**",
+      "use": "@vercel/static"
     },
     {
-      "src": "dist/public/index.html",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist/public"
-      }
+      "src": "server/index.ts",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
@@ -20,9 +17,10 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/dist/public/$1"
+      "dest": "/client/dist/$1"
     }
   ],
+  "outputDirectory": "client/dist",
   "installCommand": "npm install",
   "buildCommand": "npm run build"
 }
