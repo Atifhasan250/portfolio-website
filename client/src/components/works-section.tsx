@@ -1,52 +1,52 @@
 import { useState } from 'react';
-import ecommerceImage from '@assets/generated_images/E-commerce_website_design_fde16400.png';
-import taskAppImage from '@assets/generated_images/Task_management_app_e972a635.png';
-import weatherAppImage from '@assets/generated_images/Weather_app_interface_b50b4ffc.png';
-import blogImage from '@assets/generated_images/Blog_website_design_01128bcb.png';
-import realEstateImage from '@assets/generated_images/Real_estate_platform_c2212799.png';
-import socialDashboardImage from '@assets/generated_images/Social_media_dashboard_047baf5c.png';
 
 export default function WorksSection() {
   const allProjects = [
     {
       title: "E-Commerce Platform",
       description: "A full-stack e-commerce solution with payment integration, inventory management, and admin dashboard.",
-      image: ecommerceImage,
+      gradient: "from-blue-500 to-purple-600",
+      icon: "🛒",
       link: "#",
       technologies: ["Next.js", "Stripe", "PostgreSQL"]
     },
     {
       title: "Task Management App",
       description: "A collaborative task management application with real-time updates and team collaboration features.",
-      image: taskAppImage,
+      gradient: "from-green-500 to-teal-600",
+      icon: "📋",
       link: "#",
       technologies: ["React", "Socket.io", "MySQL"]
     },
     {
       title: "Weather Forecast App",
       description: "A beautiful weather application with location-based forecasts, interactive maps, and weather alerts.",
-      image: weatherAppImage,
+      gradient: "from-cyan-500 to-blue-600",
+      icon: "🌤️",
       link: "#",
       technologies: ["React Native", "Weather API", "Maps SDK"]
     },
     {
       title: "Modern Blog Platform",
       description: "A content management system with rich text editor, SEO optimization, and multi-author support.",
-      image: blogImage,
+      gradient: "from-orange-500 to-red-600",
+      icon: "📝",
       link: "#",
       technologies: ["Next.js", "MDX", "Prisma"]
     },
     {
       title: "Real Estate Platform",
       description: "A comprehensive real estate platform with property listings, virtual tours, and mortgage calculator.",
-      image: realEstateImage,
+      gradient: "from-emerald-500 to-green-600",
+      icon: "🏠",
       link: "#",
       technologies: ["Vue.js", "Google Maps", "Firebase"]
     },
     {
       title: "Social Media Dashboard",
       description: "A comprehensive dashboard for managing multiple social media accounts with analytics and scheduling features.",
-      image: socialDashboardImage,
+      gradient: "from-pink-500 to-rose-600",
+      icon: "📊",
       link: "#",
       technologies: ["Vue.js", "Express.js", "Chart.js"]
     }
@@ -110,12 +110,8 @@ export default function WorksSection() {
                   animationFillMode: 'forwards'
                 }}
               >
-                <div className="overflow-hidden rounded-md mb-4">
-                  <img 
-                    src={project.image} 
-                    alt={project.title} 
-                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" 
-                  />
+                <div className={`w-full h-48 bg-gradient-to-br ${project.gradient} rounded-md mb-4 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 overflow-hidden`}>
+                  <div className="text-white text-4xl">{project.icon}</div>
                 </div>
                 <h3 className="text-xl font-bold mb-2">{project.title}</h3>
                 <p className="text-gray-400 mb-4 text-sm leading-relaxed">
