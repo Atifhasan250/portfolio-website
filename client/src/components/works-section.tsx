@@ -5,48 +5,42 @@ export default function WorksSection() {
     {
       title: "E-Commerce Platform",
       description: "A full-stack e-commerce solution with payment integration, inventory management, and admin dashboard.",
-      gradient: "from-blue-500 to-purple-600",
-      icon: "🛒",
+      image: "/project-ecommerce.png",
       link: "#",
       technologies: ["Next.js", "Stripe", "PostgreSQL"]
     },
     {
       title: "Task Management App",
       description: "A collaborative task management application with real-time updates and team collaboration features.",
-      gradient: "from-green-500 to-teal-600",
-      icon: "📋",
+      image: "/project-task-app.png",
       link: "#",
       technologies: ["React", "Socket.io", "MySQL"]
     },
     {
       title: "Weather Forecast App",
       description: "A beautiful weather application with location-based forecasts, interactive maps, and weather alerts.",
-      gradient: "from-cyan-500 to-blue-600",
-      icon: "🌤️",
+      image: "/project-weather-app.png",
       link: "#",
       technologies: ["React Native", "Weather API", "Maps SDK"]
     },
     {
       title: "Modern Blog Platform",
       description: "A content management system with rich text editor, SEO optimization, and multi-author support.",
-      gradient: "from-orange-500 to-red-600",
-      icon: "📝",
+      image: "/project-blog.png",
       link: "#",
       technologies: ["Next.js", "MDX", "Prisma"]
     },
     {
       title: "Real Estate Platform",
       description: "A comprehensive real estate platform with property listings, virtual tours, and mortgage calculator.",
-      gradient: "from-emerald-500 to-green-600",
-      icon: "🏠",
+      image: "/project-real-estate.png",
       link: "#",
       technologies: ["Vue.js", "Google Maps", "Firebase"]
     },
     {
       title: "Social Media Dashboard",
       description: "A comprehensive dashboard for managing multiple social media accounts with analytics and scheduling features.",
-      gradient: "from-pink-500 to-rose-600",
-      icon: "📊",
+      image: "/project-social-dashboard.png",
       link: "#",
       technologies: ["Vue.js", "Express.js", "Chart.js"]
     }
@@ -110,8 +104,12 @@ export default function WorksSection() {
                   animationFillMode: 'forwards'
                 }}
               >
-                <div className={`w-full h-48 bg-gradient-to-br ${project.gradient} rounded-md mb-4 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 overflow-hidden`}>
-                  <div className="text-white text-4xl">{project.icon}</div>
+                <div className="overflow-hidden rounded-md mb-4">
+                  <img 
+                    src={project.image} 
+                    alt={project.title} 
+                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" 
+                  />
                 </div>
                 <h3 className="text-xl font-bold mb-2">{project.title}</h3>
                 <p className="text-gray-400 mb-4 text-sm leading-relaxed">

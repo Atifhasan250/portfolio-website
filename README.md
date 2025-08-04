@@ -172,6 +172,11 @@ Update the color palette in `client/src/index.css`:
 2. Import and add it to `client/src/pages/portfolio.tsx`
 3. Update navigation if needed in `client/src/components/navbar.tsx`
 
+### Updating Images
+- **Profile Image**: Replace `client/public/profile-image.png` with your photo
+- **Project Images**: Replace project images in `client/public/` (project-*.png files)
+- Images are automatically optimized during build process
+
 ## 📧 Contact Form Setup
 
 The contact form uses a backend API. To set it up:

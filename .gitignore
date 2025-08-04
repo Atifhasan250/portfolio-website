@@ -13,6 +13,9 @@ build/
 .vercel/
 .netlify/
 
+# Include public assets (images, etc.)
+!client/public/
+
 # Runtime data
 pids/
 *.pid
