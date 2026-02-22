@@ -46,7 +46,7 @@ export default function Footer() {
 
         {/* Copyright section */}
         <div className="border-t border-gray-700 pt-4 mt-8 text-center text-sm text-gray-500">
-          &copy; 2025 - Atif Hasan | Designed By FR Softwares
+          &copy; 2026 - Atif Hasan | Designed By Atif Hasan
         </div>
       </div>
     </footer>

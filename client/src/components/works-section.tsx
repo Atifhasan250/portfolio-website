@@ -3,25 +3,25 @@ import { useState } from 'react';
 export default function WorksSection() {
   const allProjects = [
     {
-      title: "Shortened Link",
-      description: "A powerful, easy-to-use URL shortener with custom links, instant redirects, and link previews.",
-      image: "/shortened-link.png",
-      link: "https://shortened-link.vercel.app/",
-      technologies: ["Next.js", "Stripe", "PostgreSQL"]
-    },
-    {
       title: "IntelliPlan",
-      description: "Your all-in-one Next.js study planner with task management, goal setting, and timer to focus. (For students)",
+      description: "Your all-in-one study planner with task management, goal setting, and timer to focus. (For students)",
       image: "/intelliplan.png",
       link: "https://intelliplan.vercel.app/",
-      technologies: ["Next.js", "Socket.io", "MySQL"]
+      technologies: ["Next.js", "Firebase", "MySQL"]
+    },
+    {
+      title: "Monthly Todo Planner",
+      description: "A monthly goal planner that helps you keep track of your progress and tracks daily habit.",
+      image: "/monthly-todo-planner.png",
+      link: "https://monthly-todo-planner.netlify.app/",
+      technologies: ["React.js", "MongoDB"]
     },
     {
       title: "Shad Jatra",
       description: "Explore the rich flavors of Bangladeshi cuisine. Step-by-step guides in a user-friendly web app.",
       image: "/shad-jatra.png",
       link: "https://shad-jatra.vercel.app/",
-      technologies: ["React Native", "Recipe API"]
+      technologies: ["Next.js", "Recipe API"]
     },
     {
       title: "classnote Sorter",
@@ -35,6 +35,13 @@ export default function WorksSection() {
       description: "Track and manage your personal capital with ease. This project is a finance dashboard built with Next.js, React, TypeScript, Tailwind CSS, and Recharts for data visualization.",
       image: "/capital-balance.png",
       link: "https://capital-balance.vercel.app/",
+      technologies: ["Next.js", "MongoDB"]
+    },
+    {
+      title: "Shortened Link",
+      description: "A powerful, easy-to-use URL shortener with custom links, instant redirects, and link previews.",
+      image: "/shortened-link.png",
+      link: "https://shortened-link.vercel.app/",
       technologies: ["Next.js", "Firebase"]
     }
   ];
@@ -65,7 +72,7 @@ export default function WorksSection() {
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold">Featured Projects</h2>
           <div className="flex space-x-2">
-            <button 
+            <button
               onClick={prevPage}
               className="p-2 bg-gray-800 hover:bg-gray-700 rounded-full transition-colors duration-300"
               aria-label="Previous projects"
@@ -74,7 +81,7 @@ export default function WorksSection() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <button 
+            <button
               onClick={nextPage}
               className="p-2 bg-gray-800 hover:bg-gray-700 rounded-full transition-colors duration-300"
               aria-label="Next projects"
@@ -85,12 +92,12 @@ export default function WorksSection() {
             </button>
           </div>
         </div>
-        
+
         <div className="overflow-hidden">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 transition-all duration-500 ease-in-out">
             {getCurrentProjects().map((project, index) => (
-              <div 
-                key={`${currentIndex}-${index}`} 
+              <div
+                key={`${currentIndex}-${index}`}
                 className="section-card group opacity-0 animate-fade-in flex flex-col"
                 style={{
                   animationDelay: `${index * 100}ms`,
@@ -98,10 +105,10 @@ export default function WorksSection() {
                 }}
               >
                 <div className="overflow-hidden rounded-md mb-4">
-                  <img 
-                    src={project.image} 
-                    alt={project.title} 
-                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" 
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
                 <h3 className="text-xl font-bold mb-2">{project.title}</h3>
@@ -110,7 +117,7 @@ export default function WorksSection() {
                 </p>
                 <div className="flex flex-wrap gap-2 mb-6">
                   {project.technologies.map((tech, techIndex) => (
-                    <span 
+                    <span
                       key={techIndex}
                       className="px-2 py-1 bg-gray-800 text-xs text-gray-300 rounded-full"
                     >
@@ -119,8 +126,8 @@ export default function WorksSection() {
                   ))}
                 </div>
                 <div className="mt-auto">
-                  <a 
-                    href={project.link} 
+                  <a
+                    href={project.link}
                     className="inline-block bg-white text-black px-4 py-2 rounded-full font-medium hover:bg-gray-200 transition-all duration-300 hover:shadow-lg"
                   >
                     View Project
@@ -137,9 +144,8 @@ export default function WorksSection() {
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
-              className={`w-3 h-3 rounded-full transition-colors duration-300 ${
-                currentIndex === index ? 'bg-white' : 'bg-gray-600'
-              }`}
+              className={`w-3 h-3 rounded-full transition-colors duration-300 ${currentIndex === index ? 'bg-white' : 'bg-gray-600'
+                }`}
               aria-label={`Go to project ${index + 1}`}
             />
           ))}
