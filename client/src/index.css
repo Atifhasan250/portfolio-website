@@ -34,8 +34,8 @@
   --color-accent-text: #9B98A3;
 
   /* Selection + Scrollbar */
-  --color-selection-bg: rgba(148, 163, 184, 0.26);
-  --color-selection-text: #F5F7FA;
+  --color-selection-bg: #E8E6E1;
+  --color-selection-text: #111318;
   --color-scrollbar-track: #171920;
   --color-scrollbar-thumb: #3A3840;
   --color-scrollbar-thumb-hover: #55515d;
@@ -72,8 +72,8 @@
   --color-accent-text: #6B6B6B;
 
   /* Selection + Scrollbar */
-  --color-selection-bg: rgba(120, 113, 108, 0.22);
-  --color-selection-text: #1A1918;
+  --color-selection-bg: #1A1918;
+  --color-selection-text: #F7F5F2;
   --color-scrollbar-track: #ECE7E1;
   --color-scrollbar-thumb: #C8C1B8;
   --color-scrollbar-thumb-hover: #B2AAA1;
@@ -370,6 +370,21 @@
 
   .hero-image {
     filter: none;
+  }
+
+  /* Rotating text in hero — underline style */
+  .rotating-text {
+    display: inline-flex !important;
+    align-items: center;
+    font-weight: 700;
+    border-bottom: 2.5px solid currentColor;
+    padding-bottom: 1px;
+    vertical-align: baseline;
+  }
+
+  .rotating-text,
+  .rotating-text * {
+    color: inherit !important;
   }
 
   .carousel-control {

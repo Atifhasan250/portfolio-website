@@ -1,0 +1,20 @@
+.scroll-float {
+  overflow: hidden;
+  display: inline-flex;
+}
+
+.scroll-float-text {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.char {
+  display: inline-block;
+  white-space: pre;
+}
+
+.scroll-float-text,
+.scroll-float-text * {
+  color: inherit !important;
+}

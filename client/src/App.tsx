@@ -1,5 +1,6 @@
 import { useEffect, useState, type MouseEvent } from 'react';
 import Lenis from 'lenis';
+import TargetCursor from './components/TargetCursor';
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -38,9 +39,10 @@ function App() {
 
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.1,
+      lerp: 0.045, // Much smoother momentum
+      wheelMultiplier: 1.0,
       smoothWheel: true,
-      smoothTouch: false,
+      syncTouch: true,
     });
 
     let animationFrameId = 0;
@@ -97,6 +99,12 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
+        <TargetCursor 
+          targetSelector=".cta-button, .outline-button, .btn-primary, .tech-tab, .carousel-control, .social-icon, .project-card-media, .nav-link, .mobile-nav-link, .logomark-link, .theme-toggle"
+          spinDuration={2}
+          hideDefaultCursor={true}
+          parallaxOn={true}
+        />
         <Router onToggleTheme={toggleTheme} currentTheme={theme} />
       </TooltipProvider>
     </QueryClientProvider>

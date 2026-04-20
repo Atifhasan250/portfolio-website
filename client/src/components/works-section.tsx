@@ -1,12 +1,105 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { motion, useMotionValue, useSpring } from 'motion/react';
+import FadeUpOnScroll from './FadeUpOnScroll';
+import ScrollFloat from './ScrollFloat';
+
+interface Project {
+  title: string;
+  description: string;
+  image: string;
+  link: string;
+  technologies: string[];
+}
+
+const springConfig = { damping: 20, stiffness: 120, mass: 1.5 };
+
+function ProjectCard({
+  project,
+  cardRef,
+  onImageClick,
+}: {
+  project: Project;
+  cardRef?: React.Ref<HTMLDivElement>;
+  onImageClick: () => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const rotateX = useSpring(useMotionValue(0), springConfig);
+  const rotateY = useSpring(useMotionValue(0), springConfig);
+  const scale = useSpring(1, springConfig);
+
+  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const offsetX = e.clientX - rect.left - rect.width / 2;
+    const offsetY = e.clientY - rect.top - rect.height / 2;
+    rotateX.set((offsetY / (rect.height / 2)) * -6);
+    rotateY.set((offsetX / (rect.width / 2)) * 6);
+  }
+
+  function handleMouseEnter() {
+    scale.set(1.02);
+  }
+
+  function handleMouseLeave() {
+    rotateX.set(0);
+    rotateY.set(0);
+    scale.set(1);
+  }
+
+  return (
+    <div ref={cardRef} className="works-card min-w-0 flex-shrink-0" style={{ perspective: '800px' }}>
+      <motion.div
+        ref={ref}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        style={{ rotateX, rotateY, scale, transformStyle: 'preserve-3d' }}
+        className="project-card section-card-no-hover flex flex-col h-full"
+      >
+        <button
+          type="button"
+          className="project-card-image project-image-trigger overflow-hidden mb-5 cursor-zoom-in"
+          onClick={onImageClick}
+          aria-label={`Open full image for ${project.title}`}
+        >
+          <img
+            src={project.image}
+            alt={project.title}
+            className="project-card-media w-full h-64 md:h-72 object-cover object-top"
+          />
+        </button>
+        <h3 className="text-2xl font-bold mb-3">{project.title}</h3>
+        <p className="mb-4 text-sm leading-relaxed" style={{ color: 'var(--color-text-body)' }}>
+          {project.description}
+        </p>
+        <div className="flex flex-wrap gap-2 mb-6">
+          {project.technologies.map((tech, techIndex) => (
+            <span key={techIndex} className="tech-chip px-2 py-1 text-xs rounded-full">
+              {tech}
+            </span>
+          ))}
+        </div>
+        <div className="mt-auto">
+          <a
+            href={project.link}
+            className="btn-primary inline-block px-6 py-3 text-sm sm:text-base"
+          >
+            View Project
+          </a>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
 
 export default function WorksSection() {
-  const allProjects = [
+  const allProjects: Project[] = [
     {
       title: "Stitch Drive",
       description: "A Google Drive file organizing app that helps you manage files of multiple Google Drive accounts.",
       image: "/stitchdrive.png",
-      link: "https://stitchdrive.vercel.app/",
+      link: "https://stitch-drive.vercel.app/",
       technologies: ["Next.js", "MongoDB", "Google Drive API", "Clerk", "Tailwind CSS"]
     },
     {
@@ -135,9 +228,19 @@ export default function WorksSection() {
 
   return (
     <section id="works" className="py-20 px-4 md:px-8">
-      <div className="container mx-auto max-w-6xl">
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-3xl font-bold">Featured Projects</h2>
+      <FadeUpOnScroll>
+        <div className="container mx-auto max-w-6xl">
+          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <ScrollFloat
+              animationDuration={1}
+              ease="back.inOut(2)"
+              scrollStart="top bottom"
+              scrollEnd="bottom center"
+              stagger={0.03}
+              containerClassName="text-3xl font-bold"
+            >
+              Featured Projects
+            </ScrollFloat>
           <div className="flex space-x-2">
             <button
               onClick={prevPage}
@@ -168,46 +271,12 @@ export default function WorksSection() {
             style={{ transform: `translate3d(${translateX}px, 0, 0)` }}
           >
             {allProjects.map((project, index) => (
-              <div
+              <ProjectCard
                 key={project.title}
-                ref={index === 0 ? firstCardRef : null}
-                className="project-card section-card-no-hover group flex min-w-0 flex-shrink-0 flex-col works-card"
-              >
-                <button
-                  type="button"
-                  className="project-card-image project-image-trigger overflow-hidden mb-5"
-                  onClick={() => setSelectedProjectImage({ src: project.image, title: project.title })}
-                  aria-label={`Open full image for ${project.title}`}
-                >
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="project-card-media w-full h-64 md:h-72 object-cover object-top transition-transform duration-300 group-hover:scale-105"
-                  />
-                </button>
-                <h3 className="text-2xl font-bold mb-3">{project.title}</h3>
-                <p className="mb-4 text-sm leading-relaxed" style={{ color: 'var(--color-text-body)' }}>
-                  {project.description}
-                </p>
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {project.technologies.map((tech, techIndex) => (
-                    <span
-                      key={techIndex}
-                      className="tech-chip px-2 py-1 text-xs rounded-full"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-                <div className="mt-auto">
-                  <a
-                    href={project.link}
-                    className="btn-primary inline-block px-6 py-3 text-sm sm:text-base"
-                  >
-                    View Project
-                  </a>
-                </div>
-              </div>
+                project={project}
+                cardRef={index === 0 ? firstCardRef : undefined}
+                onImageClick={() => setSelectedProjectImage({ src: project.image, title: project.title })}
+              />
             ))}
           </div>
         </div>
@@ -222,7 +291,8 @@ export default function WorksSection() {
             />
           ))}
         </div>
-      </div>
+        </div>
+      </FadeUpOnScroll>
 
       {selectedProjectImage && (
         <div

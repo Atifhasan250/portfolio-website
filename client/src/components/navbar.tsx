@@ -1,4 +1,5 @@
-import { useState, type MouseEvent } from 'react';
+import { useState, useEffect, useRef, type MouseEvent } from 'react';
+import StaggeredMenu from './StaggeredMenu';
 
 interface NavbarProps {
   onToggleTheme?: (event?: MouseEvent<HTMLButtonElement>) => void;
@@ -6,25 +7,31 @@ interface NavbarProps {
 }
 
 export default function Navbar({ onToggleTheme, currentTheme = 'dark' }: NavbarProps) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-
   const scrollToSection = (sectionId: string) => {
     if (sectionId === 'hero') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      setIsMobileMenuOpen(false);
       return;
     }
 
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
-      setIsMobileMenuOpen(false);
     }
   };
+
+  const menuItems = [
+    { label: 'Home', ariaLabel: 'Go to home page', action: () => scrollToSection('hero') },
+    { label: 'About', ariaLabel: 'Learn about us', action: () => scrollToSection('about') },
+    { label: 'Works', ariaLabel: 'View our works', action: () => scrollToSection('works') },
+    { label: 'Contact', ariaLabel: 'Get in touch', action: () => scrollToSection('contact') }
+  ];
+
+  const socialItems = [
+    { label: 'Facebook', link: 'https://www.facebook.com/atifhasan250' },
+    { label: 'Instagram', link: 'https://www.instagram.com/_atif_hasan_/' },
+    { label: 'LinkedIn', link: 'https://www.linkedin.com/in/atifhasan250/' },
+    { label: 'GitHub', link: 'https://github.com/atifhasan250' }
+  ];
 
   return (
     <nav className="navbar-custom p-4 w-full fixed top-0 left-0 z-20">
@@ -59,24 +66,20 @@ export default function Navbar({ onToggleTheme, currentTheme = 'dark' }: NavbarP
             </button>
           )}
 
-          <button
-            onClick={toggleMobileMenu}
-            className="md:hidden p-3 rounded-xl border border-[var(--color-border-default)] focus:outline-none"
-            aria-label="Toggle navigation menu"
-          >
-            <svg className="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <div className={`mobile-menu-container md:hidden ${isMobileMenuOpen ? 'open' : ''}`}>
-        <div className="mt-4 flex flex-col items-stretch space-y-2 py-2 navbar-custom">
-          <button onClick={() => scrollToSection('hero')} className="mobile-nav-link">Home</button>
-          <button onClick={() => scrollToSection('about')} className="mobile-nav-link">About</button>
-          <button onClick={() => scrollToSection('works')} className="mobile-nav-link">Works</button>
-          <button onClick={() => scrollToSection('contact')} className="mobile-nav-link">Contact</button>
+          <div className="md:hidden">
+            <StaggeredMenu
+              position="right"
+              items={menuItems}
+              socialItems={socialItems}
+              displaySocials={true}
+              displayItemNumbering={true}
+              menuButtonColor="var(--color-text-heading)"
+              openMenuButtonColor="var(--color-text-heading)"
+              changeMenuColorOnOpen={false}
+              colors={['var(--color-border-default)', 'var(--color-bg-card)']}
+              accentColor="var(--color-text-heading)"
+            />
+          </div>
         </div>
       </div>
     </nav>

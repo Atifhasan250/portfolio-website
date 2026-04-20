@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import FadeUpOnScroll from './FadeUpOnScroll';
+import ScrollFloat from './ScrollFloat';
 import {
   SiReact,
   SiTypescript,
@@ -137,10 +139,20 @@ export function TechStackSection() {
 
   return (
     <section id="tech-stack" className="py-20 px-4 md:px-8">
-      <div className="container mx-auto max-w-6xl">
-        <div className="section-card-no-hover">
+      <FadeUpOnScroll>
+        <div className="container mx-auto max-w-6xl">
+          <div className="section-card-no-hover">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Technology Stack</h2>
+            <ScrollFloat
+              animationDuration={1}
+              ease="back.inOut(2)"
+              scrollStart="top bottom"
+              scrollEnd="bottom center"
+              stagger={0.03}
+              containerClassName="text-3xl md:text-4xl font-bold mb-4"
+            >
+              Technology Stack
+            </ScrollFloat>
             <p className="max-w-2xl mx-auto text-sm md:text-base">
               I continuously utilize cutting-edge technologies in my projects to maintain
               professionalism and innovation.
@@ -207,7 +219,8 @@ export function TechStackSection() {
             </div>
           </div>
         </div>
-      </div>
+        </div>
+      </FadeUpOnScroll>
     </section>
   );
 }
