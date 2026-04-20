@@ -22,7 +22,7 @@ export default function ServicesSection() {
           {services.map((service, index) => (
             <div key={index} className="section-card">
               <h3 className="text-xl font-bold mb-2">{service.title}</h3>
-              <p className="text-gray-400">
+              <p style={{ color: 'var(--color-text-body)' }}>
                 {service.description}
               </p>
             </div>

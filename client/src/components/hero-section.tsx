@@ -7,23 +7,26 @@ export default function HeroSection() {
   };
 
   return (
-    <section id="hero" className="flex items-center justify-center py-20 px-4 md:px-8">
-      <div className="container mx-auto max-w-6xl flex flex-col md:flex-row items-center justify-center gap-12 text-center md:text-left">
-        <div className="md:w-1/2 flex justify-center md:justify-end">
+    <section id="hero" className="flex items-center justify-center px-4 py-16 md:px-8 md:py-20">
+      <div className="container mx-auto max-w-6xl flex flex-col items-center justify-center gap-10 text-center md:flex-row md:gap-12 md:text-left">
+        <div className="flex w-full justify-center md:w-1/2 md:justify-end">
           <img 
             src="/profile-image.png" 
             alt="Atif Hasan Profile Picture" 
-            className="w-full max-w-sm h-auto rounded-2xl shadow-2xl" 
+            className="hero-image h-auto w-full max-w-[280px] rounded-2xl sm:max-w-sm" 
           />
         </div>
-        <div className="md:w-1/2 text-center md:text-left mt-8 md:mt-0">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">
+        <div className="mt-2 w-full text-center md:mt-0 md:w-1/2 md:text-left">
+          <h1 className="mb-4 text-4xl font-bold sm:text-5xl md:text-6xl">
             Atif Hasan
           </h1>
-          <p className="text-lg md:text-xl text-gray-400 mb-8">
+          <p
+            className="mb-8 mx-auto max-w-xl text-base sm:text-lg md:mx-0 md:text-xl"
+            style={{ color: 'var(--color-text-body)' }}
+          >
             Crafting elegant and performant web experiences.
           </p>
-          <div className="flex justify-center md:justify-start space-x-4">
+          <div className="flex flex-col justify-center gap-4 sm:flex-row md:justify-start">
             <button onClick={scrollToWorks} className="cta-button">
               View My Work
             </button>
