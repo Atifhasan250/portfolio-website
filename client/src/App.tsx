@@ -39,10 +39,10 @@ function App() {
 
   useEffect(() => {
     const lenis = new Lenis({
-      lerp: 0.045, // Much smoother momentum
-      wheelMultiplier: 1.0,
+      lerp: 0.035, // Adjusted for even smoother momentum
+      wheelMultiplier: 1.5,
       smoothWheel: true,
-      syncTouch: true,
+      syncTouch: false, // Disabled to allow accurate native scrolling on mobile
     });
 
     let animationFrameId = 0;
@@ -99,7 +99,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <TargetCursor 
+        <TargetCursor
           targetSelector=".cta-button, .outline-button, .btn-primary, .tech-tab, .carousel-control, .social-icon, .project-card-media, .nav-link, .mobile-nav-link, .logomark-link, .theme-toggle"
           spinDuration={2}
           hideDefaultCursor={true}

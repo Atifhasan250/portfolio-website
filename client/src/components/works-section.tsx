@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, useMotionValue, useSpring } from 'motion/react';
+import useEmblaCarousel from 'embla-carousel-react';
 import FadeUpOnScroll from './FadeUpOnScroll';
 import ScrollFloat from './ScrollFloat';
 
@@ -146,57 +147,50 @@ export default function WorksSection() {
     }
   ];
 
-  const viewportRef = useRef<HTMLDivElement | null>(null);
-  const firstCardRef = useRef<HTMLDivElement | null>(null);
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: 'start',
+    containScroll: 'trimSnaps',
+    dragFree: false,
+  });
+
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
-  const [stepSize, setStepSize] = useState(0);
+  const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(false);
   const [selectedProjectImage, setSelectedProjectImage] = useState<{ src: string; title: string } | null>(null);
 
-  useEffect(() => {
-    const updateViewport = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
 
-    updateViewport();
-    window.addEventListener('resize', updateViewport);
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
 
-    return () => window.removeEventListener('resize', updateViewport);
+  const scrollTo = useCallback((index: number) => {
+    if (emblaApi) emblaApi.scrollTo(index);
+  }, [emblaApi]);
+
+  const onInit = useCallback((emblaApi: any) => {
+    setScrollSnaps(emblaApi.scrollSnapList());
   }, []);
 
-  const visibleProjects = isMobile ? 1 : 3;
-  const maxIndex = Math.max(0, allProjects.length - visibleProjects);
+  const onSelect = useCallback((emblaApi: any) => {
+    setCurrentIndex(emblaApi.selectedScrollSnap());
+    setCanScrollPrev(emblaApi.canScrollPrev());
+    setCanScrollNext(emblaApi.canScrollNext());
+  }, []);
 
   useEffect(() => {
-    setCurrentIndex((prev) => Math.min(prev, maxIndex));
-  }, [maxIndex]);
+    if (!emblaApi) return;
 
-  useEffect(() => {
-    const updateStepSize = () => {
-      if (!viewportRef.current || !firstCardRef.current) return;
-
-      const viewportWidth = viewportRef.current.offsetWidth;
-      const cardWidth = firstCardRef.current.offsetWidth;
-      const visibleCount = isMobile ? 1 : 3;
-      const gapCount = visibleCount - 1;
-      const totalGap = Math.max(0, viewportWidth - (cardWidth * visibleCount));
-      const gap = gapCount > 0 ? totalGap / gapCount : 0;
-
-      setStepSize(cardWidth + gap);
-    };
-
-    updateStepSize();
-
-    const resizeObserver = new ResizeObserver(updateStepSize);
-    if (viewportRef.current) resizeObserver.observe(viewportRef.current);
-    if (firstCardRef.current) resizeObserver.observe(firstCardRef.current);
-
-    window.addEventListener('resize', updateStepSize);
-    return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener('resize', updateStepSize);
-    };
-  }, [isMobile]);
+    onInit(emblaApi);
+    onSelect(emblaApi);
+    
+    emblaApi.on('reInit', onInit);
+    emblaApi.on('reInit', onSelect);
+    emblaApi.on('select', onSelect);
+  }, [emblaApi, onInit, onSelect]);
 
   useEffect(() => {
     if (!selectedProjectImage) return;
@@ -216,16 +210,6 @@ export default function WorksSection() {
     };
   }, [selectedProjectImage]);
 
-  const translateX = useMemo(() => -(currentIndex * stepSize), [currentIndex, stepSize]);
-
-  const nextPage = () => {
-    setCurrentIndex((prev) => Math.min(prev + 1, maxIndex));
-  };
-
-  const prevPage = () => {
-    setCurrentIndex((prev) => Math.max(prev - 1, 0));
-  };
-
   return (
     <section id="works" className="py-20 px-4 md:px-8">
       <FadeUpOnScroll>
@@ -243,20 +227,20 @@ export default function WorksSection() {
             </ScrollFloat>
           <div className="flex space-x-2">
             <button
-              onClick={prevPage}
+              onClick={scrollPrev}
               className="carousel-control p-2 rounded-full transition-colors duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
               aria-label="Previous projects"
-              disabled={currentIndex === 0}
+              disabled={!canScrollPrev}
             >
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
             <button
-              onClick={nextPage}
+              onClick={scrollNext}
               className="carousel-control p-2 rounded-full transition-colors duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
               aria-label="Next projects"
-              disabled={currentIndex === maxIndex}
+              disabled={!canScrollNext}
             >
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
@@ -265,16 +249,15 @@ export default function WorksSection() {
           </div>
         </div>
 
-        <div ref={viewportRef} className="overflow-hidden">
-          <div
-            className="works-track flex gap-0 md:gap-8"
-            style={{ transform: `translate3d(${translateX}px, 0, 0)` }}
-          >
+        <div 
+          ref={emblaRef} 
+          className="overflow-hidden cursor-grab active:cursor-grabbing"
+        >
+          <div className="flex gap-0 md:gap-8">
             {allProjects.map((project, index) => (
               <ProjectCard
                 key={project.title}
                 project={project}
-                cardRef={index === 0 ? firstCardRef : undefined}
                 onImageClick={() => setSelectedProjectImage({ src: project.image, title: project.title })}
               />
             ))}
@@ -282,10 +265,10 @@ export default function WorksSection() {
         </div>
 
         <div className="flex justify-center mt-8 space-x-2">
-          {Array.from({ length: maxIndex + 1 }).map((_, index) => (
+          {scrollSnaps.map((_, index) => (
             <button
               key={index}
-              onClick={() => setCurrentIndex(index)}
+              onClick={() => scrollTo(index)}
               className={`project-dot ${currentIndex === index ? 'active' : ''}`}
               aria-label={`Go to project ${index + 1}`}
             />

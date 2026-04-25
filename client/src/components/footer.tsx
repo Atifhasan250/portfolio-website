@@ -46,7 +46,7 @@ export default function Footer() {
 
         {/* Copyright section */}
         <div className="border-t pt-4 mt-8 text-center text-sm" style={{ borderColor: 'var(--color-border-default)', color: 'var(--color-text-muted)' }}>
-          &copy; 2026 - Atif Hasan | Designed By Atif Hasan
+          &copy; 2026 - Made with ❤️ by Atif Hasan
         </div>
       </div>
     </footer>

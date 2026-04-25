@@ -81,7 +81,7 @@
 
 @layer base {
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto; /* Changed from smooth to fix Lenis mobile scroll momentum */
   }
 
   * {
