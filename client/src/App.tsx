@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Portfolio from "@/pages/portfolio";
 import NotFound from "@/pages/not-found";
+import { Analytics } from '@vercel/analytics/react';
 
 function Router({
   onToggleTheme,
@@ -106,6 +107,7 @@ function App() {
           parallaxOn={true}
         />
         <Router onToggleTheme={toggleTheme} currentTheme={theme} />
+        <Analytics />
       </TooltipProvider>
     </QueryClientProvider>
   );
