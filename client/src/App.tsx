@@ -100,7 +100,7 @@ function App() {
       <TooltipProvider>
         <Toaster />
         <TargetCursor
-          targetSelector=".cta-button, .outline-button, .btn-primary, .tech-tab, .carousel-control, .social-icon, .project-card-media, .nav-link, .mobile-nav-link, .logomark-link, .theme-toggle"
+          targetSelector=".cta-button, .outline-button, .btn-primary, .tech-tab, .carousel-control:not(:disabled), .social-icon, .nav-link, .mobile-nav-link, .logomark-link, .theme-toggle"
           spinDuration={2}
           hideDefaultCursor={true}
           parallaxOn={true}

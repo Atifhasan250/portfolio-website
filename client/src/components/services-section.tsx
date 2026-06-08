@@ -5,16 +5,28 @@ import ScrollFloat from './ScrollFloat';
 export default function ServicesSection() {
   const services = [
     {
-      title: "Web Development",
-      description: "Building responsive, fast, and scalable websites and web applications using modern technologies like React, Vue.js, and Node.js."
+      title: "Premium Web Development",
+      description: "Fast, clean, responsive websites built to look sharp and grow with your business."
     },
     {
-      title: "UI/UX Design",
-      description: "Crafting intuitive and visually stunning user interfaces that provide an exceptional user experience on all devices."
+      title: "Conversion-Focused UI/UX",
+      description: "Simple, modern interfaces that guide visitors clearly and turn attention into action."
     },
     {
-      title: "API Integration",
-      description: "Seamlessly integrating third-party APIs and building custom back-end solutions to power dynamic web applications."
+      title: "AI Integration",
+      description: "Smart chatbots, content tools, summaries, and AI workflows built into real products."
+    },
+    {
+      title: "SaaS & Dashboard Development",
+      description: "Clean dashboards with user accounts, admin panels, charts, roles, and useful controls."
+    },
+    {
+      title: "API & Backend Systems",
+      description: "APIs, databases, auth, payments, forms, and third-party services that work smoothly."
+    },
+    {
+      title: "Performance & SEO Optimization",
+      description: "Faster load times, better structure, stronger SEO, and smoother mobile experience."
     }
   ];
 
@@ -22,19 +34,23 @@ export default function ServicesSection() {
     <section id="services" className="py-20 px-4 md:px-8">
       <FadeUpOnScroll>
         <div className="container mx-auto max-w-6xl">
-          <div className="flex justify-center w-full">
+          <div className="text-center mb-16">
             <ScrollFloat
               animationDuration={1}
               ease="back.inOut(2)"
               scrollStart="top bottom"
               scrollEnd="bottom center"
               stagger={0.03}
-              containerClassName="text-3xl font-bold mb-8 text-center"
+              containerClassName="text-3xl md:text-4xl font-bold mb-4"
             >
               My Services
             </ScrollFloat>
+            <p className="max-w-2xl mx-auto text-sm md:text-base">
+              Not just pretty pages. I build practical web experiences that look sharp,
+              work smoothly, and solve real problems.
+            </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {services.map((service, index) => (
               <SpotlightCard
                 key={index}
