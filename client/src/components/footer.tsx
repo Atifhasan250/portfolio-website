@@ -27,9 +27,8 @@ export default function Footer() {
           <div className="w-full">
             <h3 className="text-2xl font-bold mb-4">Contact Info</h3>
             <ul className="space-y-2 text-sm break-all sm:break-normal" style={{ color: 'var(--color-text-body)' }}>
-              <li><a href="tel:+8801754020488" className="footer-link transition duration-300">+8801754020488</a></li>
               <li><a href="mailto:atifhasan000000@gmail.com" className="footer-link transition duration-300">atifhasan000000@gmail.com</a></li>
-              <li>Khandar, <br />Bogura, Bangladesh</li>
+              <li>Bogura, Bangladesh</li>
             </ul>
           </div>
 

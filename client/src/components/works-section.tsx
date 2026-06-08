@@ -97,18 +97,25 @@ function ProjectCard({
 export default function WorksSection() {
   const allProjects: Project[] = [
     {
+      title: "IT Resource Zone",
+      description: "An IT learning portal with live exams, practice mode, leaderboards, dashboards, habits, and curated resources.",
+      image: "/it-resource-zone.png",
+      link: "https://irz.atifhasan.com/",
+      technologies: ["Next.js", "MongoDB", "Clerk", "Tailwind CSS", "PWA"]
+    },
+    {
       title: "Stitch Drive",
       description: "A Google Drive file organizing app that helps you manage files of multiple Google Drive accounts.",
       image: "/stitchdrive.png",
-      link: "https://stitch-drive.vercel.app/",
+      link: "https://stitchdrive.vercel.app/",
       technologies: ["Next.js", "MongoDB", "Google Drive API", "Clerk", "Tailwind CSS"]
     },
     {
-      title: "IntelliPlan",
-      description: "Your all-in-one study planner with task management, goal setting, and timer to focus. (For students)",
-      image: "/intelliplan.png",
-      link: "https://intelliplan.vercel.app/",
-      technologies: ["Next.js", "Firebase", "Clerk"]
+      title: "Shortened Link",
+      description: "A powerful, easy-to-use URL shortener with custom links, instant redirects, and link previews.",
+      image: "/shortened-link.png",
+      link: "https://shortened-link.vercel.app/",
+      technologies: ["Next.js", "MongoDB", "Tailwind CSS"]
     },
     {
       title: "Monthly Todo Planner",
@@ -118,11 +125,11 @@ export default function WorksSection() {
       technologies: ["React.js", "MongoDB", "Expo", "Tailwind CSS"]
     },
     {
-      title: "Shad Jatra",
-      description: "Explore the rich flavors of Bangladeshi cuisine. Step-by-step guides in a user-friendly web app.",
-      image: "/shad-jatra.png",
-      link: "https://shad-jatra.vercel.app/",
-      technologies: ["Next.js", "Recipe API", "Clerk", "MongoDB"]
+      title: "IntelliPlan",
+      description: "Your all-in-one study planner with task management, goal setting, and timer to focus. (For students)",
+      image: "/intelliplan.png",
+      link: "https://intelliplan.vercel.app/",
+      technologies: ["Next.js", "Firebase", "Clerk"]
     },
     {
       title: "Classnote Sorter",
@@ -132,18 +139,18 @@ export default function WorksSection() {
       technologies: ["Next.js", "MongoDB", "Firebase", "Tailwind CSS"]
     },
     {
+      title: "Shad Jatra",
+      description: "Explore the rich flavors of Bangladeshi cuisine. Step-by-step guides in a user-friendly web app.",
+      image: "/shad-jatra.png",
+      link: "https://shad-jatra.vercel.app/",
+      technologies: ["Next.js", "Recipe API", "Clerk", "MongoDB"]
+    },
+    {
       title: "Capital Balance",
       description: "Track and manage your personal capital with ease. This project is a finance dashboard built with Next.js, React, TypeScript, Tailwind CSS, and Recharts for data visualization.",
       image: "/capital-balance.png",
       link: "https://capital-balance.vercel.app/",
       technologies: ["Next.js", "MongoDB", "Clerk", "Recharts"]
-    },
-    {
-      title: "Shortened Link",
-      description: "A powerful, easy-to-use URL shortener with custom links, instant redirects, and link previews.",
-      image: "/shortened-link.png",
-      link: "https://shortened-link.vercel.app/",
-      technologies: ["Next.js", "MongoDB", "Tailwind CSS"]
     }
   ];
 
