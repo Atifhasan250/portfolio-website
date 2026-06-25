@@ -154,6 +154,13 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
     window.addEventListener('mousedown', mouseDownHandler);
     window.addEventListener('mouseup', mouseUpHandler);
 
+    const observer = new MutationObserver(() => {
+      if (activeTarget && !document.contains(activeTarget)) {
+        currentLeaveHandler?.();
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
     const enterHandler = (e: MouseEvent) => {
       const directTarget = e.target as Element;
       const allTargets: Element[] = [];
@@ -257,6 +264,7 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
     window.addEventListener('mouseover', enterHandler as EventListener);
 
     return () => {
+      observer.disconnect();
       if (tickerFnRef.current) {
         gsap.ticker.remove(tickerFnRef.current);
       }
