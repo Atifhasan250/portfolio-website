@@ -1,8 +1,15 @@
+import { useLocation } from 'wouter';
 import RotatingText from './RotatingText';
 
 export default function HeroSection() {
-  const scrollToWorks = () => {
-    const element = document.getElementById('works');
+  const [, setLocation] = useLocation();
+
+  const handleViewWorks = () => {
+    setLocation('/projects');
+  };
+
+  const scrollToContact = () => {
+    const element = document.getElementById('contact');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
@@ -42,11 +49,11 @@ export default function HeroSection() {
             />
           </div>
           <div className="flex flex-col justify-center gap-4 sm:flex-row md:justify-start">
-            <button onClick={scrollToWorks} className="cta-button">
+            <button onClick={handleViewWorks} className="cta-button">
               View My Work
             </button>
-            <button className="outline-button">
-              <a href="https://github.com/Atifhasan250" target="_blank" rel="noopener noreferrer">View My GitHub</a>
+            <button onClick={scrollToContact} className="outline-button">
+              Contact With Me
             </button>
           </div>
         </div>

@@ -1,18 +1,48 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { motion, useMotionValue, useSpring } from 'motion/react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
+import { useQuery } from '@tanstack/react-query';
+import { useLocation } from 'wouter';
 import FadeUpOnScroll from './FadeUpOnScroll';
 import ScrollFloat from './ScrollFloat';
+import SpotlightCard from './SpotlightCard';
+
+function getOptimizedImageUrl(url: string, width: number = 800) {
+  if (!url || !url.includes('ik.imagekit.io')) return url;
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}tr=w-${width},q-80,f-auto`;
+}
 
 interface Project {
+  _id: string;
   title: string;
   description: string;
-  image: string;
+  imageUrl: string;
   link: string;
   technologies: string[];
+  featured: boolean;
+  order: number;
 }
 
 const springConfig = { damping: 20, stiffness: 120, mass: 1.5 };
+
+// ── Placeholder shown when a project has no image ─────────────────────────────
+function ImagePlaceholder({ title }: { title: string }) {
+  const initials = title
+    .split(' ')
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase();
+
+  return (
+    <div className="project-img-placeholder">
+      <div className="project-img-placeholder-inner">
+        <div className="project-img-placeholder-initials">{initials}</div>
+        <div className="project-img-placeholder-label">No image yet</div>
+      </div>
+    </div>
+  );
+}
 
 function ProjectCard({
   project,
@@ -23,136 +53,86 @@ function ProjectCard({
   cardRef?: React.Ref<HTMLDivElement>;
   onImageClick: () => void;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const rotateX = useSpring(useMotionValue(0), springConfig);
-  const rotateY = useSpring(useMotionValue(0), springConfig);
-  const scale = useSpring(1, springConfig);
-
-  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
-    const el = ref.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const offsetX = e.clientX - rect.left - rect.width / 2;
-    const offsetY = e.clientY - rect.top - rect.height / 2;
-    rotateX.set((offsetY / (rect.height / 2)) * -6);
-    rotateY.set((offsetX / (rect.width / 2)) * 6);
-  }
-
-  function handleMouseEnter() {
-    scale.set(1.02);
-  }
-
-  function handleMouseLeave() {
-    rotateX.set(0);
-    rotateY.set(0);
-    scale.set(1);
-  }
+  const hasImage = !!project.imageUrl;
 
   return (
-    <div ref={cardRef} className="works-card min-w-0 flex-shrink-0" style={{ perspective: '800px' }}>
-      <motion.div
-        ref={ref}
-        onMouseMove={handleMouseMove}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        style={{ rotateX, rotateY, scale, transformStyle: 'preserve-3d' }}
-        className="project-card section-card-no-hover flex flex-col h-full"
-      >
-        <button
-          type="button"
-          className="project-card-image project-image-trigger overflow-hidden mb-5 cursor-zoom-in"
-          onClick={onImageClick}
-          aria-label={`Open full image for ${project.title}`}
-        >
-          <img
-            src={project.image}
-            alt={project.title}
-            className="project-card-media w-full h-64 md:h-72 object-cover object-top"
-          />
-        </button>
-        <h3 className="text-2xl font-bold mb-3">{project.title}</h3>
-        <p className="mb-4 text-sm leading-relaxed" style={{ color: 'var(--color-text-body)' }}>
+    <div ref={cardRef} className="works-card min-w-0 flex-shrink-0">
+      <SpotlightCard className="project-card section-card-no-hover flex flex-col h-full">
+        <div className="project-card-image project-image-trigger overflow-hidden mb-5">
+          {hasImage ? (
+            <div
+              role="button"
+              tabIndex={0}
+              className="project-image-trigger overflow-hidden cursor-zoom-in w-full p-0 border-0 bg-transparent block"
+              onClick={(e) => {
+                if (e.defaultPrevented) return;
+                onImageClick();
+              }}
+              onKeyDown={(e) => { if (e.key === 'Enter') onImageClick(); }}
+              aria-label={`Open full image for ${project.title}`}
+            >
+              <img
+                src={getOptimizedImageUrl(project.imageUrl, 800)}
+                alt={project.title}
+                className="project-card-media w-full h-64 md:h-72 object-cover object-top select-none pointer-events-none"
+                draggable={false}
+              />
+            </div>
+          ) : (
+            <ImagePlaceholder title={project.title} />
+          )}
+        </div>
+
+        <h3 className="text-2xl font-bold mb-3 select-none">{project.title}</h3>
+        <p className="mb-4 text-sm leading-relaxed select-none" style={{ color: 'var(--color-text-body)' }}>
           {project.description}
         </p>
-        <div className="flex flex-wrap gap-2 mb-6">
-          {project.technologies.map((tech, techIndex) => (
-            <span key={techIndex} className="tech-chip px-2 py-1 text-xs rounded-full">
-              {tech}
-            </span>
+        <div className="flex flex-wrap gap-2 mb-6 select-none">
+          {project.technologies.map((tech, i) => (
+            <span key={i} className="tech-chip px-2 py-1 text-xs rounded-full">{tech}</span>
           ))}
         </div>
         <div className="mt-auto">
-          <a
-            href={project.link}
-            className="btn-primary inline-block px-6 py-3 text-sm sm:text-base"
-          >
+          <a href={project.link} target="_blank" rel="noopener noreferrer" className="btn-primary inline-block px-6 py-3 text-sm sm:text-base">
             View Project
           </a>
         </div>
-      </motion.div>
+      </SpotlightCard>
+    </div>
+  );
+}
+
+// ── Skeleton card ─────────────────────────────────────────────────────────────
+function SkeletonCard() {
+  return (
+    <div className="works-card min-w-0 flex-shrink-0">
+      <div className="project-card section-card-no-hover flex flex-col h-full">
+        <div className="project-card-image mb-5 overflow-hidden">
+          <div className="works-skeleton-img" />
+        </div>
+        <div className="works-skeleton-line w-3/4 mb-3" />
+        <div className="works-skeleton-line w-full mb-1" />
+        <div className="works-skeleton-line w-5/6 mb-6" />
+        <div className="flex gap-2 mb-6">
+          <div className="works-skeleton-chip" />
+          <div className="works-skeleton-chip" />
+          <div className="works-skeleton-chip" />
+        </div>
+        <div className="mt-auto">
+          <div className="works-skeleton-btn" />
+        </div>
+      </div>
     </div>
   );
 }
 
 export default function WorksSection() {
-  const allProjects: Project[] = [
-    {
-      title: "IT Resource Zone",
-      description: "An IT learning portal with live exams, practice mode, leaderboards, dashboards, habits, and curated resources.",
-      image: "/it-resource-zone.png",
-      link: "https://irz.atifhasan.com/",
-      technologies: ["Next.js", "MongoDB", "Clerk", "Tailwind CSS", "PWA"]
-    },
-    {
-      title: "Stitch Drive",
-      description: "A Google Drive file organizing app that helps you manage files of multiple Google Drive accounts.",
-      image: "/stitchdrive.png",
-      link: "https://stitchdrive.vercel.app/",
-      technologies: ["Next.js", "MongoDB", "Google Drive API", "Clerk", "Tailwind CSS"]
-    },
-    {
-      title: "Shortened Link",
-      description: "A powerful, easy-to-use URL shortener with custom links, instant redirects, and link previews.",
-      image: "/shortened-link.png",
-      link: "https://shortened-link.vercel.app/",
-      technologies: ["Next.js", "MongoDB", "Tailwind CSS"]
-    },
-    {
-      title: "Monthly Todo Planner",
-      description: "A monthly goal planner that helps you keep track of your progress and tracks daily habit. (Android App)",
-      image: "/monthly-todo-planner.png",
-      link: "https://monthly-todo-planner.netlify.app/",
-      technologies: ["React.js", "MongoDB", "Expo", "Tailwind CSS"]
-    },
-    {
-      title: "IntelliPlan",
-      description: "Your all-in-one study planner with task management, goal setting, and timer to focus. (For students)",
-      image: "/intelliplan.png",
-      link: "https://intelliplan.vercel.app/",
-      technologies: ["Next.js", "Firebase", "Clerk"]
-    },
-    {
-      title: "Classnote Sorter",
-      description: "Optimize your classnote PDFs with Classnote Sorter, a web app for changing layouts and reducing costs of printing PDF class notes.",
-      image: "/classnote-sorter.png",
-      link: "https://classnote-sorter.vercel.app/",
-      technologies: ["Next.js", "MongoDB", "Firebase", "Tailwind CSS"]
-    },
-    {
-      title: "Shad Jatra",
-      description: "Explore the rich flavors of Bangladeshi cuisine. Step-by-step guides in a user-friendly web app.",
-      image: "/shad-jatra.png",
-      link: "https://shad-jatra.vercel.app/",
-      technologies: ["Next.js", "Recipe API", "Clerk", "MongoDB"]
-    },
-    {
-      title: "Capital Balance",
-      description: "Track and manage your personal capital with ease. This project is a finance dashboard built with Next.js, React, TypeScript, Tailwind CSS, and Recharts for data visualization.",
-      image: "/capital-balance.png",
-      link: "https://capital-balance.vercel.app/",
-      technologies: ["Next.js", "MongoDB", "Clerk", "Recharts"]
-    }
-  ];
+  const [, setLocation] = useLocation();
+  const { data: allProjects = [], isLoading, isError } = useQuery<Project[]>({
+    queryKey: ['/api/projects'],
+  });
+
+  const projects = useMemo(() => allProjects.filter(p => p.featured), [allProjects]);
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
@@ -166,56 +146,36 @@ export default function WorksSection() {
   const [canScrollNext, setCanScrollNext] = useState(false);
   const [selectedProjectImage, setSelectedProjectImage] = useState<{ src: string; title: string } | null>(null);
 
-  const scrollPrev = useCallback(() => {
-    if (emblaApi) emblaApi.scrollPrev();
-  }, [emblaApi]);
+  const scrollPrev = useCallback(() => { if (emblaApi) emblaApi.scrollPrev(); }, [emblaApi]);
+  const scrollNext = useCallback(() => { if (emblaApi) emblaApi.scrollNext(); }, [emblaApi]);
+  const scrollTo = useCallback((index: number) => { if (emblaApi) emblaApi.scrollTo(index); }, [emblaApi]);
 
-  const scrollNext = useCallback(() => {
-    if (emblaApi) emblaApi.scrollNext();
-  }, [emblaApi]);
-
-  const scrollTo = useCallback((index: number) => {
-    if (emblaApi) emblaApi.scrollTo(index);
-  }, [emblaApi]);
-
-  const onInit = useCallback((emblaApi: any) => {
-    setScrollSnaps(emblaApi.scrollSnapList());
-  }, []);
-
-  const onSelect = useCallback((emblaApi: any) => {
-    setCurrentIndex(emblaApi.selectedScrollSnap());
-    setCanScrollPrev(emblaApi.canScrollPrev());
-    setCanScrollNext(emblaApi.canScrollNext());
+  const onInit = useCallback((api: any) => { setScrollSnaps(api.scrollSnapList()); }, []);
+  const onSelect = useCallback((api: any) => {
+    setCurrentIndex(api.selectedScrollSnap());
+    setCanScrollPrev(api.canScrollPrev());
+    setCanScrollNext(api.canScrollNext());
   }, []);
 
   useEffect(() => {
     if (!emblaApi) return;
-
     onInit(emblaApi);
     onSelect(emblaApi);
-    
     emblaApi.on('reInit', onInit);
     emblaApi.on('reInit', onSelect);
     emblaApi.on('select', onSelect);
-  }, [emblaApi, onInit, onSelect]);
+  }, [emblaApi, onInit, onSelect, projects]);
 
   useEffect(() => {
     if (!selectedProjectImage) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setSelectedProjectImage(null);
-      }
-    };
-
+    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') setSelectedProjectImage(null); };
     document.body.style.overflow = 'hidden';
     window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.body.style.overflow = '';
-      window.removeEventListener('keydown', handleKeyDown);
-    };
+    return () => { document.body.style.overflow = ''; window.removeEventListener('keydown', handleKeyDown); };
   }, [selectedProjectImage]);
+
+  // Re-init carousel when projects load
+  useEffect(() => { if (emblaApi) emblaApi.reInit(); }, [emblaApi, projects]);
 
   return (
     <section id="works" className="py-20 px-4 md:px-8">
@@ -232,55 +192,72 @@ export default function WorksSection() {
             >
               Featured Projects
             </ScrollFloat>
-          <div className="flex space-x-2">
-            <button
-              onClick={scrollPrev}
-              className="carousel-control p-2 rounded-full transition-colors duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
-              aria-label="Previous projects"
-              disabled={!canScrollPrev}
-            >
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button
-              onClick={scrollNext}
-              className="carousel-control p-2 rounded-full transition-colors duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
-              aria-label="Next projects"
-              disabled={!canScrollNext}
-            >
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
+            <div className="flex space-x-2">
+              <button
+                onClick={scrollPrev}
+                className="carousel-control p-2 rounded-full transition-colors duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
+                aria-label="Previous projects"
+                disabled={!canScrollPrev}
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                onClick={scrollNext}
+                className="carousel-control p-2 rounded-full transition-colors duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
+                aria-label="Next projects"
+                disabled={!canScrollNext}
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
           </div>
-        </div>
 
-        <div 
-          ref={emblaRef} 
-          className="overflow-hidden cursor-grab active:cursor-grabbing"
-        >
-          <div className="flex gap-0 md:gap-8">
-            {allProjects.map((project, index) => (
-              <ProjectCard
-                key={project.title}
-                project={project}
-                onImageClick={() => setSelectedProjectImage({ src: project.image, title: project.title })}
+          {isError && (
+            <div className="text-center py-12" style={{ color: 'var(--color-text-muted)' }}>
+              Failed to load projects. Please try again later.
+            </div>
+          )}
+
+          <div ref={emblaRef} className="overflow-hidden cursor-grab active:cursor-grabbing">
+            <div className="flex gap-0 md:gap-8">
+              {isLoading
+                ? Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)
+                : projects.map((project) => (
+                    <ProjectCard
+                      key={project._id}
+                      project={project}
+                      onImageClick={() =>
+                        project.imageUrl &&
+                        setSelectedProjectImage({ src: project.imageUrl, title: project.title })
+                      }
+                    />
+                  ))}
+            </div>
+          </div>
+
+          <div className="flex justify-center mt-8 space-x-2">
+            {scrollSnaps.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => scrollTo(index)}
+                className={`project-dot ${currentIndex === index ? 'active' : ''}`}
+                aria-label={`Go to project ${index + 1}`}
               />
             ))}
           </div>
-        </div>
-
-        <div className="flex justify-center mt-8 space-x-2">
-          {scrollSnaps.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => scrollTo(index)}
-              className={`project-dot ${currentIndex === index ? 'active' : ''}`}
-              aria-label={`Go to project ${index + 1}`}
-            />
-          ))}
-        </div>
+          
+          <div className="flex justify-center mt-16">
+            <button 
+              onClick={() => setLocation('/projects')} 
+              className="cta-button"
+            >
+              See All Projects &rarr;
+            </button>
+          </div>
         </div>
       </FadeUpOnScroll>
 
@@ -292,10 +269,7 @@ export default function WorksSection() {
           aria-label={`${selectedProjectImage.title} full image preview`}
           onClick={() => setSelectedProjectImage(null)}
         >
-          <div
-            className="project-lightbox-content"
-            onClick={(event) => event.stopPropagation()}
-          >
+          <div className="project-lightbox-content" onClick={(e) => e.stopPropagation()}>
             <button
               type="button"
               className="project-lightbox-close"
@@ -306,11 +280,7 @@ export default function WorksSection() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6l-12 12" />
               </svg>
             </button>
-            <img
-              src={selectedProjectImage.src}
-              alt={selectedProjectImage.title}
-              className="project-lightbox-image"
-            />
+            <img src={getOptimizedImageUrl(selectedProjectImage.src, 1600)} alt={selectedProjectImage.title} className="project-lightbox-image" />
           </div>
         </div>
       )}

@@ -1,6 +1,47 @@
-import SpotlightCard from './SpotlightCard';
 import FadeUpOnScroll from './FadeUpOnScroll';
 import ScrollFloat from './ScrollFloat';
+import { useRef } from 'react';
+import { motion, useMotionValue, useSpring } from 'motion/react';
+
+const springConfig = { damping: 20, stiffness: 100, mass: 1 };
+
+function ServiceCard({ service }: { service: { title: string; description: string } }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const rotateX = useSpring(useMotionValue(0), springConfig);
+  const rotateY = useSpring(useMotionValue(0), springConfig);
+  const scale = useSpring(1, springConfig);
+
+  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const offsetX = e.clientX - rect.left - rect.width / 2;
+    const offsetY = e.clientY - rect.top - rect.height / 2;
+    rotateX.set((offsetY / (rect.height / 2)) * -6);
+    rotateY.set((offsetX / (rect.width / 2)) * 6);
+  }
+
+  function handleMouseEnter() { scale.set(1.02); }
+  function handleMouseLeave() { rotateX.set(0); rotateY.set(0); scale.set(1); }
+
+  return (
+    <div style={{ perspective: '800px' }} className="h-full flex">
+      <motion.div
+        ref={ref}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        style={{ rotateX, rotateY, scale, transformStyle: 'preserve-3d' }}
+        className="section-card-no-hover flex flex-col h-full w-full"
+      >
+        <h3 className="text-xl font-bold mb-2">{service.title}</h3>
+        <p style={{ color: 'var(--color-text-body)' }}>
+          {service.description}
+        </p>
+      </motion.div>
+    </div>
+  );
+}
 
 export default function ServicesSection() {
   const services = [
@@ -52,16 +93,7 @@ export default function ServicesSection() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {services.map((service, index) => (
-              <SpotlightCard
-                key={index}
-                className="section-card-no-hover"
-                spotlightColor="rgba(255, 255, 255, 0.06)"
-              >
-                <h3 className="text-xl font-bold mb-2">{service.title}</h3>
-                <p style={{ color: 'var(--color-text-body)' }}>
-                  {service.description}
-                </p>
-              </SpotlightCard>
+              <ServiceCard key={index} service={service} />
             ))}
           </div>
         </div>
