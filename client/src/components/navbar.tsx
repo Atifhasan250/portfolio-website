@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, type MouseEvent } from 'react';
+import { useLocation } from 'wouter';
 import StaggeredMenu from './StaggeredMenu';
 
 interface NavbarProps {
@@ -7,7 +8,24 @@ interface NavbarProps {
 }
 
 export default function Navbar({ onToggleTheme, currentTheme = 'dark' }: NavbarProps) {
+  const [location, setLocation] = useLocation();
+
   const scrollToSection = (sectionId: string) => {
+    if (location !== '/') {
+      setLocation('/');
+      setTimeout(() => {
+        if (sectionId === 'hero') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+      return;
+    }
+
     if (sectionId === 'hero') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
