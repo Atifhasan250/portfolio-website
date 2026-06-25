@@ -20,15 +20,15 @@
     },
     {
       "src": "^/assets/(.*)",
-      "dest": "/dist/public/assets/$1"
+      "dest": "/assets/$1"
     },
     {
       "src": "^/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg|json))$",
-      "dest": "/dist/public/$1"
+      "dest": "/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "/dist/public/index.html"
+      "dest": "/index.html"
     }
   ],
   "installCommand": "npm install",
