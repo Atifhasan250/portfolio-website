@@ -1,9 +1,9 @@
 import type { Express } from 'express';
 import { createServer, type Server } from 'http';
 import multer from 'multer';
-import { storage } from './storage';
-import { generateToken, setAuthCookie, clearAuthCookie, requireAuth } from './auth';
-import { uploadToImageKit, deleteFromImageKit } from './imagekit';
+import { storage } from './storage.js';
+import { generateToken, setAuthCookie, clearAuthCookie, requireAuth } from './auth.js';
+import { uploadToImageKit, deleteFromImageKit } from './imagekit.js';
 import { z } from 'zod';
 import rateLimit from 'express-rate-limit';
 

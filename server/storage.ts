@@ -1,4 +1,4 @@
-import { getProjectsCollection, getContactsCollection } from './db';
+import { getProjectsCollection, getContactsCollection } from './db.js';
 import { ObjectId } from 'mongodb';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
