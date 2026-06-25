@@ -1,4 +1,4 @@
-import { getProjectsCollection } from './db';
+import { getProjectsCollection } from './db.js';
 
 const SEED_PROJECTS = [
   {
