@@ -19,8 +19,16 @@
       "dest": "/server/index.ts"
     },
     {
-      "src": "/(.*)",
+      "src": "^/assets/(.*)",
+      "dest": "/dist/public/assets/$1"
+    },
+    {
+      "src": "^/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg|json))$",
       "dest": "/dist/public/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/dist/public/index.html"
     }
   ],
   "installCommand": "npm install",
