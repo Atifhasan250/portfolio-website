@@ -71,9 +71,8 @@ export function serveStatic(app: Express) {
   const distPath = path.resolve(import.meta.dirname, "public");
 
   if (!fs.existsSync(distPath)) {
-    throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
-    );
+    log(`Could not find the build directory: ${distPath}, assuming static files are served by Vercel CDN.`);
+    return;
   }
 
   app.use(express.static(distPath));
