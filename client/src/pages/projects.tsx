@@ -129,11 +129,11 @@ export default function ProjectsPage({ onToggleTheme, currentTheme = 'dark' }: P
     <div className="min-h-screen flex flex-col">
       <Navbar onToggleTheme={onToggleTheme} currentTheme={currentTheme} />
       
-      <main className="flex-grow pt-32 pb-20 px-4 md:px-8">
+      <main className="flex-grow pt-24 pb-20 px-4 md:pt-32 md:px-8">
         <FadeUpOnScroll>
           <div className="container mx-auto max-w-6xl">
-            <div className="mb-12">
-              <div className="flex items-center gap-4 mb-4">
+            <div className="mb-8 md:mb-12">
+              <div className="flex items-center gap-4">
                 <button 
                   onClick={() => {
                     if (window.history.length > 2) {
@@ -151,9 +151,6 @@ export default function ProjectsPage({ onToggleTheme, currentTheme = 'dark' }: P
                 </button>
                 <h1 className="text-4xl md:text-5xl font-bold">All Projects</h1>
               </div>
-              <p className="text-lg max-w-2xl ml-16" style={{ color: 'var(--color-text-body)' }}>
-                A complete collection of my works, including featured projects, side projects, and experiments.
-              </p>
             </div>
 
             {isError && (

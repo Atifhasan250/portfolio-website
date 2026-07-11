@@ -138,6 +138,9 @@ export default function WorksSection() {
     align: 'start',
     containScroll: 'trimSnaps',
     dragFree: false,
+    breakpoints: {
+      '(max-width: 767px)': { active: false },
+    },
   });
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -146,15 +149,22 @@ export default function WorksSection() {
   const [canScrollNext, setCanScrollNext] = useState(false);
   const [selectedProjectImage, setSelectedProjectImage] = useState<{ src: string; title: string } | null>(null);
 
-  const scrollPrev = useCallback(() => { if (emblaApi) emblaApi.scrollPrev(); }, [emblaApi]);
-  const scrollNext = useCallback(() => { if (emblaApi) emblaApi.scrollNext(); }, [emblaApi]);
-  const scrollTo = useCallback((index: number) => { if (emblaApi) emblaApi.scrollTo(index); }, [emblaApi]);
+  const scrollPrev = useCallback(() => { if (emblaApi && emblaApi.scrollPrev) emblaApi.scrollPrev(); }, [emblaApi]);
+  const scrollNext = useCallback(() => { if (emblaApi && emblaApi.scrollNext) emblaApi.scrollNext(); }, [emblaApi]);
+  const scrollTo = useCallback((index: number) => { if (emblaApi && emblaApi.scrollTo) emblaApi.scrollTo(index); }, [emblaApi]);
 
-  const onInit = useCallback((api: any) => { setScrollSnaps(api.scrollSnapList()); }, []);
+  const onInit = useCallback((api: any) => { 
+    if (api && typeof api.scrollSnapList === 'function') {
+      setScrollSnaps(api.scrollSnapList()); 
+    }
+  }, []);
+  
   const onSelect = useCallback((api: any) => {
-    setCurrentIndex(api.selectedScrollSnap());
-    setCanScrollPrev(api.canScrollPrev());
-    setCanScrollNext(api.canScrollNext());
+    if (api && typeof api.selectedScrollSnap === 'function') {
+      setCurrentIndex(api.selectedScrollSnap());
+      setCanScrollPrev(api.canScrollPrev());
+      setCanScrollNext(api.canScrollNext());
+    }
   }, []);
 
   useEffect(() => {
@@ -192,7 +202,7 @@ export default function WorksSection() {
             >
               Featured Projects
             </ScrollFloat>
-            <div className="flex space-x-2">
+            <div className="hidden md:flex space-x-2">
               <button
                 onClick={scrollPrev}
                 className="carousel-control p-2 rounded-full transition-colors duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
@@ -222,8 +232,8 @@ export default function WorksSection() {
             </div>
           )}
 
-          <div ref={emblaRef} className="overflow-hidden cursor-grab active:cursor-grabbing">
-            <div className="flex gap-0 md:gap-8">
+          <div ref={emblaRef} className="overflow-hidden md:cursor-grab md:active:cursor-grabbing">
+            <div className="flex flex-col gap-8 md:flex-row md:gap-8">
               {isLoading
                 ? Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)
                 : projects.map((project) => (
@@ -239,7 +249,7 @@ export default function WorksSection() {
             </div>
           </div>
 
-          <div className="flex justify-center mt-8 space-x-2">
+          <div className="hidden md:flex justify-center mt-8 space-x-2">
             {scrollSnaps.map((_, index) => (
               <button
                 key={index}
