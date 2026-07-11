@@ -2,6 +2,23 @@ import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
+import {
+  DndContext,
+  closestCenter,
+  TouchSensor,
+  MouseSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  rectSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Project {
@@ -39,6 +56,77 @@ async function apiFetch(url: string, options?: RequestInit) {
 }
 
 // ─── Shared sub-components ────────────────────────────────────────────────────
+
+
+function SortableProjectCard({
+  project,
+  onEdit,
+  onDelete,
+}: {
+  project: Project;
+  onEdit: () => void;
+  onDelete: () => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: project._id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 10 : 1,
+    cursor: isDragging ? 'grabbing' : 'grab',
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="admin-project-card" {...attributes} {...listeners}>
+      <div className="admin-project-card-img-wrap">
+        {project.imageUrl ? (
+          <img src={project.imageUrl} alt={project.title} className="admin-project-card-img" loading="lazy" />
+        ) : (
+          <div className="admin-project-card-img-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>
+            <span style={{ fontSize: 11, color: 'var(--color-text-muted)', fontFamily: 'Poppins, sans-serif', marginTop: 4 }}>No image</span>
+          </div>
+        )}
+        {project.featured && (
+          <span className="admin-project-featured-badge">
+            <svg viewBox="0 0 24 24" fill="currentColor" className="admin-star-icon"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+            Featured
+          </span>
+        )}
+      </div>
+      <div className="admin-project-card-body">
+        <div className="admin-project-card-header">
+          <h3 className="admin-project-card-title">{project.title}</h3>
+          <div className="admin-project-card-actions">
+            <a href={project.link} target="_blank" rel="noopener noreferrer" onPointerDown={(e) => e.stopPropagation()} className="admin-project-action-btn admin-action-view" aria-label={`Visit ${project.title}`}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
+            </a>
+            <button type="button" onPointerDown={(e) => e.stopPropagation()} onClick={onEdit} className="admin-project-action-btn admin-action-edit" aria-label={`Edit ${project.title}`}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
+            </button>
+            <button type="button" onPointerDown={(e) => e.stopPropagation()} onClick={onDelete} className="admin-project-action-btn admin-action-delete" aria-label={`Delete ${project.title}`}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /><path d="M10 11v6M14 11v6" /><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" /></svg>
+            </button>
+          </div>
+        </div>
+        <p className="admin-project-card-desc">{project.description}</p>
+        <div className="admin-project-card-techs">
+          {project.technologies.slice(0, 4).map(t => <TechChip key={t} label={t} />)}
+          {project.technologies.length > 4 && <span className="admin-tech-more">+{project.technologies.length - 4}</span>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 function TechChip({ label, onRemove }: { label: string; onRemove?: () => void }) {
   return (
@@ -383,6 +471,7 @@ export default function AdminDashboard() {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  
   // ── Auth check ──────────────────────────────────────────────────────────────
   const { isError: isAuthError, isLoading: isAuthLoading } = useQuery({
     queryKey: ['/api/admin/me'],
@@ -403,6 +492,47 @@ export default function AdminDashboard() {
     queryFn: () => apiFetch('/api/admin/projects'),
     retry: false,
   });
+
+  const [orderedProjects, setOrderedProjects] = useState<Project[]>([]);
+  useEffect(() => {
+    if (projects) {
+      setOrderedProjects([...projects].sort((a, b) => a.order - b.order));
+    }
+  }, [projects]);
+
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 5, // 5px movement required to trigger drag (allows clicks)
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 500, // 0.5s hold on mobile
+        tolerance: 5,
+      },
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (active.id !== over?.id && over?.id) {
+      setOrderedProjects((items) => {
+        const oldIndex = items.findIndex((item) => item._id === active.id);
+        const newIndex = items.findIndex((item) => item._id === over.id);
+        
+        // Reorder local state array
+        const newItems = [...items];
+        const [moved] = newItems.splice(oldIndex, 1);
+        newItems.splice(newIndex, 0, moved);
+        
+        // Save to DB
+        reorderMutation.mutate(newItems.map((item) => item._id));
+        
+        return newItems;
+      });
+    }
+  };
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type });
@@ -443,6 +573,20 @@ export default function AdminDashboard() {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => apiFetch(`/api/admin/projects/${id}`, { method: 'DELETE' }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['/api/admin/projects'] }); qc.invalidateQueries({ queryKey: ['/api/projects'] }); },
+  });
+
+  
+  const reorderMutation = useMutation({
+    mutationFn: (orderedIds: string[]) =>
+      apiFetch('/api/admin/projects/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderedIds }),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['/api/admin/projects'] });
+      qc.invalidateQueries({ queryKey: ['/api/projects'] });
+    },
   });
 
   const logoutMutation = useMutation({
@@ -488,7 +632,7 @@ export default function AdminDashboard() {
 
   // ── Filtered list ───────────────────────────────────────────────────────────
 
-  const filtered = projects.filter(p => {
+  const filtered = orderedProjects.filter(p => {
     const matchSearch = p.title.toLowerCase().includes(search.toLowerCase()) ||
       p.description.toLowerCase().includes(search.toLowerCase()) ||
       p.technologies.some(t => t.toLowerCase().includes(search.toLowerCase()));
@@ -672,49 +816,20 @@ export default function AdminDashboard() {
 
           {/* Projects grid */}
           {!isLoading && filtered.length > 0 && (
-            <div className="admin-projects-grid">
-              {filtered.map(project => (
-                <div key={project._id} className="admin-project-card">
-                  <div className="admin-project-card-img-wrap">
-                    {project.imageUrl ? (
-                      <img src={project.imageUrl} alt={project.title} className="admin-project-card-img" loading="lazy" />
-                    ) : (
-                      <div className="admin-project-card-img-placeholder">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>
-                        <span style={{ fontSize: 11, color: 'var(--color-text-muted)', fontFamily: 'Poppins, sans-serif', marginTop: 4 }}>No image</span>
-                      </div>
-                    )}
-                    {project.featured && (
-                      <span className="admin-project-featured-badge">
-                        <svg viewBox="0 0 24 24" fill="currentColor" className="admin-star-icon"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-                        Featured
-                      </span>
-                    )}
-                  </div>
-                  <div className="admin-project-card-body">
-                    <div className="admin-project-card-header">
-                      <h3 className="admin-project-card-title">{project.title}</h3>
-                      <div className="admin-project-card-actions">
-                        <a href={project.link} target="_blank" rel="noopener noreferrer" className="admin-project-action-btn admin-action-view" aria-label={`Visit ${project.title}`}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
-                        </a>
-                        <button type="button" onClick={() => { setEditingProject(project); setModalMode('edit'); }} className="admin-project-action-btn admin-action-edit" aria-label={`Edit ${project.title}`}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
-                        </button>
-                        <button type="button" onClick={() => setDeletingProject(project)} className="admin-project-action-btn admin-action-delete" aria-label={`Delete ${project.title}`}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /><path d="M10 11v6M14 11v6" /><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" /></svg>
-                        </button>
-                      </div>
-                    </div>
-                    <p className="admin-project-card-desc">{project.description}</p>
-                    <div className="admin-project-card-techs">
-                      {project.technologies.slice(0, 4).map(t => <TechChip key={t} label={t} />)}
-                      {project.technologies.length > 4 && <span className="admin-tech-more">+{project.technologies.length - 4}</span>}
-                    </div>
-                  </div>
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <SortableContext items={filtered.map(p => p._id)} strategy={rectSortingStrategy}>
+                <div className="admin-projects-grid">
+                  {filtered.map(project => (
+                    <SortableProjectCard 
+                      key={project._id} 
+                      project={project} 
+                      onEdit={() => { setEditingProject(project); setModalMode('edit'); }}
+                      onDelete={() => setDeletingProject(project)}
+                    />
+                  ))}
                 </div>
-              ))}
-            </div>
+              </SortableContext>
+            </DndContext>
           )}
         </div>
       </main>
