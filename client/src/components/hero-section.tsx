@@ -41,10 +41,10 @@ export default function HeroSection() {
             I build AI powered Full-Stack applications.
           </p>
           <div className="flex flex-row justify-center gap-3 sm:gap-4 md:justify-start">
-            <button onClick={handleViewWorks} className="cta-button text-sm px-5 py-2.5 sm:text-base sm:px-6 sm:py-3">
+            <button onClick={handleViewWorks} className="cta-button text-sm px-6 py-2.5 sm:text-base sm:px-8 sm:py-3">
               View Works
             </button>
-            <button onClick={scrollToContact} className="outline-button text-sm px-5 py-2.5 sm:text-base sm:px-6 sm:py-3">
+            <button onClick={scrollToContact} className="outline-button text-sm px-6 py-2.5 sm:text-base sm:px-8 sm:py-3">
               Contact Me
             </button>
           </div>
