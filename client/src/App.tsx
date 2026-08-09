@@ -52,6 +52,12 @@ function App() {
   }, [theme]);
 
   useEffect(() => {
+    // Prevent browser auto-scroll on refresh (which clashes with Lenis)
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+
     // Disable Lenis on touch devices and small screens for better mobile scroll performance
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     if (isTouch || window.innerWidth < 768) {
