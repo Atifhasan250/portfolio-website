@@ -1,5 +1,5 @@
 import FadeUpOnScroll from './FadeUpOnScroll';
-import ScrollFloat from './ScrollFloat';
+
 
 export default function AboutSection() {
   return (
@@ -7,16 +7,9 @@ export default function AboutSection() {
       <FadeUpOnScroll>
         <div className="container mx-auto max-w-6xl section-card-no-hover flex flex-col md:flex-row items-center justify-center gap-12">
           <div className="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left">
-            <ScrollFloat
-              animationDuration={1}
-              ease="back.inOut(2)"
-              scrollStart="top bottom"
-              scrollEnd="bottom center"
-              stagger={0.03}
-              containerClassName="text-3xl font-bold mb-4"
-            >
+            <h2 className="text-3xl font-bold mb-4">
               About Me
-            </ScrollFloat>
+            </h2>
             <p className="text-lg mb-6 text-center md:text-left">
               I'm Atif Hasan, a web and mobile app developer from Bogura, Bangladesh. I enjoy turning ideas into polished, practical digital products that people can actually use with ease. My focus is simple: clean design, solid code, smooth performance, and experiences that feel good on every screen.
             </p>

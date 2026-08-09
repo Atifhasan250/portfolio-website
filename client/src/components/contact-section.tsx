@@ -1,6 +1,6 @@
 import { useForm, ValidationError } from '@formspree/react';
 import FadeUpOnScroll from './FadeUpOnScroll';
-import ScrollFloat from './ScrollFloat';
+
 
 export default function ContactSection() {
   const [state, handleSubmit] = useForm("mrblaeww");
@@ -10,16 +10,9 @@ export default function ContactSection() {
       <FadeUpOnScroll>
         <div className="container mx-auto max-w-6xl section-card-no-hover">
           <div className="flex justify-center w-full">
-            <ScrollFloat
-              animationDuration={1}
-              ease="back.inOut(2)"
-              scrollStart="top bottom"
-              scrollEnd="bottom center"
-              stagger={0.03}
-              containerClassName="text-3xl font-bold mb-8 text-center"
-            >
+            <h2 className="text-3xl font-bold mb-8 text-center">
               Get In Touch
-            </ScrollFloat>
+            </h2>
           </div>
         <div className="flex flex-col md:flex-row gap-8">
           {/* Left column with contact details */}
