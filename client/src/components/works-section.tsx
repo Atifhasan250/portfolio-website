@@ -3,7 +3,7 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { useQuery } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import FadeUpOnScroll from './FadeUpOnScroll';
-import ScrollFloat from './ScrollFloat';
+
 import SpotlightCard from './SpotlightCard';
 
 function getOptimizedImageUrl(url: string, width: number = 800) {
@@ -192,16 +192,9 @@ export default function WorksSection() {
       <FadeUpOnScroll>
         <div className="container mx-auto max-w-6xl">
           <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <ScrollFloat
-              animationDuration={1}
-              ease="back.inOut(2)"
-              scrollStart="top bottom"
-              scrollEnd="bottom center"
-              stagger={0.03}
-              containerClassName="text-3xl font-bold"
-            >
+            <h2 className="text-3xl font-bold">
               Featured Projects
-            </ScrollFloat>
+            </h2>
             <div className="hidden md:flex space-x-2">
               <button
                 onClick={scrollPrev}
