@@ -142,11 +142,10 @@ export function TechStackSection() {
       <FadeUpOnScroll>
         <div className="container mx-auto max-w-6xl">
           <div className="section-card-no-hover">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold">
               Technology Stack
             </h2>
-
           </div>
 
           {/* Category Tabs - Mobile and Desktop Optimized */}
