@@ -146,10 +146,7 @@ export function TechStackSection() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Technology Stack
             </h2>
-            <p className="max-w-2xl mx-auto text-sm md:text-base">
-              I continuously utilize cutting-edge technologies in my projects to maintain
-              professionalism and innovation.
-            </p>
+
           </div>
 
           {/* Category Tabs - Mobile and Desktop Optimized */}
