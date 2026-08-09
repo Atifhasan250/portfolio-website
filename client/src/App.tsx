@@ -52,11 +52,16 @@ function App() {
   }, [theme]);
 
   useEffect(() => {
+    // Disable Lenis on touch devices and small screens for better mobile scroll performance
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if (isTouch || window.innerWidth < 768) {
+      return;
+    }
+
     const lenis = new Lenis({
       lerp: 0.035, // Adjusted for even smoother momentum
       wheelMultiplier: 1.5,
       smoothWheel: true,
-      syncTouch: false, // Disabled to allow accurate native scrolling on mobile
     });
 
     let animationFrameId = 0;
