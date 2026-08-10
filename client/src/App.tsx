@@ -10,6 +10,7 @@ import Portfolio from "@/pages/portfolio";
 import NotFound from "@/pages/not-found";
 import AdminLogin from "@/pages/admin-login";
 import AdminDashboard from "@/pages/admin-dashboard";
+import Preloader from '@/components/preloader';
 
 import Projects from '@/pages/projects';
 
@@ -124,6 +125,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
+        <Preloader />
         <ConditionalCursor />
         <Router onToggleTheme={toggleTheme} currentTheme={theme} />
       </TooltipProvider>
@@ -137,7 +139,7 @@ function ConditionalCursor() {
   return (
     <TargetCursor
       targetSelector=".cta-button, .outline-button, .btn-primary, .tech-tab, .carousel-control:not(:disabled), .social-icon, .nav-link, .mobile-nav-link, .logomark-link, .theme-toggle"
-      spinDuration={2}
+      spinDuration={4}
       hideDefaultCursor={true}
       parallaxOn={true}
     />

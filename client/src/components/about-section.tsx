@@ -7,7 +7,7 @@ export default function AboutSection() {
       <FadeUpOnScroll>
         <div className="container mx-auto max-w-6xl section-card-no-hover flex flex-col md:flex-row items-center justify-center gap-12">
           <div className="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left">
-            <h2 className="text-3xl font-bold mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
               About Me
             </h2>
             <p className="text-lg mb-6 text-center md:text-left">

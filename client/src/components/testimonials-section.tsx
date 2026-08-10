@@ -83,7 +83,7 @@ export default function TestimonialsSection() {
     <section id="testimonials" className="py-20 px-4 md:px-8">
       <div className="container mx-auto max-w-6xl">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold">What Clients Say</h2>
+          <h2 className="text-3xl md:text-4xl font-bold">What Clients Say</h2>
           <div className="flex space-x-2">
             <button 
               onClick={prevPage}

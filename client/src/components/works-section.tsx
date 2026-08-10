@@ -1,10 +1,10 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
-import useEmblaCarousel from 'embla-carousel-react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import FadeUpOnScroll from './FadeUpOnScroll';
 
 import SpotlightCard from './SpotlightCard';
+import { useProjectCardReveal } from '@/hooks/use-project-card-reveal';
 
 function getOptimizedImageUrl(url: string, width: number = 800) {
   if (!url || !url.includes('ik.imagekit.io')) return url;
@@ -22,8 +22,6 @@ interface Project {
   featured: boolean;
   order: number;
 }
-
-const springConfig = { damping: 20, stiffness: 120, mass: 1.5 };
 
 // ── Placeholder shown when a project has no image ─────────────────────────────
 function ImagePlaceholder({ title }: { title: string }) {
@@ -56,7 +54,7 @@ function ProjectCard({
   const hasImage = !!project.imageUrl;
 
   return (
-    <div ref={cardRef} className="works-card min-w-0 flex-shrink-0">
+    <div ref={cardRef} data-project-reveal className="works-card min-w-0 flex-shrink-0">
       <SpotlightCard className="project-card section-card-no-hover flex flex-col h-full">
         <div className="project-card-image project-image-trigger overflow-hidden mb-5">
           {hasImage ? (
@@ -74,7 +72,7 @@ function ProjectCard({
               <img
                 src={getOptimizedImageUrl(project.imageUrl, 800)}
                 alt={project.title}
-                className="project-card-media w-full h-64 md:h-72 object-cover object-top select-none pointer-events-none"
+                className="project-card-media w-full h-64 md:h-80 object-cover object-top select-none pointer-events-none"
                 draggable={false}
               />
             </div>
@@ -105,7 +103,7 @@ function ProjectCard({
 // ── Skeleton card ─────────────────────────────────────────────────────────────
 function SkeletonCard() {
   return (
-    <div className="works-card min-w-0 flex-shrink-0">
+    <div data-project-reveal className="works-card min-w-0 flex-shrink-0">
       <div className="project-card section-card-no-hover flex flex-col h-full">
         <div className="project-card-image mb-5 overflow-hidden">
           <div className="works-skeleton-img" />
@@ -133,48 +131,11 @@ export default function WorksSection() {
   });
 
   const projects = useMemo(() => allProjects.filter(p => p.featured), [allProjects]);
+  const projectsGridRef = useRef<HTMLDivElement>(null);
+  const revealKey = isLoading ? 'loading' : projects.map(project => project._id).join(',');
+  useProjectCardReveal(projectsGridRef, revealKey);
 
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    align: 'start',
-    containScroll: 'trimSnaps',
-    dragFree: false,
-    breakpoints: {
-      '(max-width: 767px)': { active: false },
-    },
-  });
-
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
-  const [canScrollPrev, setCanScrollPrev] = useState(false);
-  const [canScrollNext, setCanScrollNext] = useState(false);
   const [selectedProjectImage, setSelectedProjectImage] = useState<{ src: string; title: string } | null>(null);
-
-  const scrollPrev = useCallback(() => { if (emblaApi && emblaApi.scrollPrev) emblaApi.scrollPrev(); }, [emblaApi]);
-  const scrollNext = useCallback(() => { if (emblaApi && emblaApi.scrollNext) emblaApi.scrollNext(); }, [emblaApi]);
-  const scrollTo = useCallback((index: number) => { if (emblaApi && emblaApi.scrollTo) emblaApi.scrollTo(index); }, [emblaApi]);
-
-  const onInit = useCallback((api: any) => { 
-    if (api && typeof api.scrollSnapList === 'function') {
-      setScrollSnaps(api.scrollSnapList()); 
-    }
-  }, []);
-  
-  const onSelect = useCallback((api: any) => {
-    if (api && typeof api.selectedScrollSnap === 'function') {
-      setCurrentIndex(api.selectedScrollSnap());
-      setCanScrollPrev(api.canScrollPrev());
-      setCanScrollNext(api.canScrollNext());
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-    onInit(emblaApi);
-    onSelect(emblaApi);
-    emblaApi.on('reInit', onInit);
-    emblaApi.on('reInit', onSelect);
-    emblaApi.on('select', onSelect);
-  }, [emblaApi, onInit, onSelect, projects]);
 
   useEffect(() => {
     if (!selectedProjectImage) return;
@@ -184,40 +145,16 @@ export default function WorksSection() {
     return () => { document.body.style.overflow = ''; window.removeEventListener('keydown', handleKeyDown); };
   }, [selectedProjectImage]);
 
-  // Re-init carousel when projects load
-  useEffect(() => { if (emblaApi) emblaApi.reInit(); }, [emblaApi, projects]);
-
   return (
     <section id="works" className="py-20 px-4 md:px-8">
-      <FadeUpOnScroll>
-        <div className="container mx-auto max-w-6xl">
-          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-3xl font-bold">
+      <div className="container mx-auto max-w-6xl">
+          <FadeUpOnScroll>
+          <div className="mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold">
               Featured Projects
             </h2>
-            <div className="hidden md:flex space-x-2">
-              <button
-                onClick={scrollPrev}
-                className="carousel-control p-2 rounded-full transition-colors duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
-                aria-label="Previous projects"
-                disabled={!canScrollPrev}
-              >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <button
-                onClick={scrollNext}
-                className="carousel-control p-2 rounded-full transition-colors duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
-                aria-label="Next projects"
-                disabled={!canScrollNext}
-              >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
           </div>
+          </FadeUpOnScroll>
 
           {isError && (
             <div className="text-center py-12" style={{ color: 'var(--color-text-muted)' }}>
@@ -225,44 +162,37 @@ export default function WorksSection() {
             </div>
           )}
 
-          <div ref={emblaRef} className="overflow-hidden md:cursor-grab md:active:cursor-grabbing">
-            <div className="flex flex-col gap-8 md:flex-row md:gap-8">
-              {isLoading
-                ? Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)
-                : projects.map((project) => (
-                    <ProjectCard
-                      key={project._id}
-                      project={project}
-                      onImageClick={() =>
-                        project.imageUrl &&
-                        setSelectedProjectImage({ src: project.imageUrl, title: project.title })
-                      }
-                    />
-                  ))}
-            </div>
-          </div>
-
-          <div className="hidden md:flex justify-center mt-8 space-x-2">
-            {scrollSnaps.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => scrollTo(index)}
-                className={`project-dot ${currentIndex === index ? 'active' : ''}`}
-                aria-label={`Go to project ${index + 1}`}
-              />
-            ))}
+          <div ref={projectsGridRef} className="grid grid-cols-1 gap-8 md:grid-cols-2">
+            {isLoading
+              ? Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)
+              : projects.map((project) => (
+                  <ProjectCard
+                    key={project._id}
+                    project={project}
+                    onImageClick={() =>
+                      project.imageUrl &&
+                      setSelectedProjectImage({ src: project.imageUrl, title: project.title })
+                    }
+                  />
+                ))}
           </div>
           
+          <FadeUpOnScroll>
           <div className="flex justify-center mt-16">
             <button 
-              onClick={() => setLocation('/projects')} 
+              onClick={() => {
+                sessionStorage.setItem('portfolio:home-scroll-y', String(window.scrollY));
+                sessionStorage.setItem('portfolio:opened-projects-from-home', 'true');
+                sessionStorage.removeItem('portfolio:restore-home-scroll');
+                setLocation('/projects');
+              }}
               className="cta-button"
             >
               See All Projects &rarr;
             </button>
           </div>
-        </div>
-      </FadeUpOnScroll>
+          </FadeUpOnScroll>
+      </div>
 
       {selectedProjectImage && (
         <div
