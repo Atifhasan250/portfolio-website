@@ -1,4 +1,4 @@
-import { useState, MouseEvent, useEffect } from 'react';
+import { useState, MouseEvent, useLayoutEffect, useMemo, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import type { Project } from '@shared/schema';
@@ -6,6 +6,7 @@ import SpotlightCard from '@/components/SpotlightCard';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
 import FadeUpOnScroll from '@/components/FadeUpOnScroll';
+import { useProjectCardReveal } from '@/hooks/use-project-card-reveal';
 
 function getOptimizedImageUrl(url: string, width: number = 800) {
   if (!url || !url.includes('ik.imagekit.io')) return url;
@@ -53,7 +54,7 @@ function ProjectCard({
             <img
               src={getOptimizedImageUrl(project.imageUrl, 800)}
               alt={project.title}
-              className="project-card-media w-full h-64 md:h-72 object-cover object-top select-none"
+              className="project-card-media w-full h-64 md:h-80 object-cover object-top select-none"
               draggable={false}
             />
           </button>
@@ -115,15 +116,19 @@ export default function ProjectsPage({ onToggleTheme, currentTheme = 'dark' }: P
 
   const [, setLocation] = useLocation();
 
-  useEffect(() => {
-    // Slight delay ensures it overrides the browser's native scroll restoration
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    }, 10);
+  useLayoutEffect(() => {
+    const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'instant' });
+    scrollToTop();
+    const frame = window.requestAnimationFrame(scrollToTop);
+
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   // Sort projects: order first, then fallback to something else if needed
-  const sortedProjects = [...projects].sort((a, b) => a.order - b.order);
+  const sortedProjects = useMemo(() => [...projects].sort((a, b) => a.order - b.order), [projects]);
+  const projectsGridRef = useRef<HTMLDivElement>(null);
+  const revealKey = isLoading ? 'loading' : sortedProjects.map(project => project._id).join(',');
+  useProjectCardReveal(projectsGridRef, revealKey);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -136,7 +141,10 @@ export default function ProjectsPage({ onToggleTheme, currentTheme = 'dark' }: P
               <div className="flex items-center gap-4">
                 <button 
                   onClick={() => {
-                    if (window.history.length > 2) {
+                    const openedFromHome = sessionStorage.getItem('portfolio:opened-projects-from-home') === 'true';
+
+                    if (openedFromHome) {
+                      sessionStorage.setItem('portfolio:restore-home-scroll', 'true');
                       window.history.back();
                     } else {
                       setLocation('/');
@@ -159,18 +167,21 @@ export default function ProjectsPage({ onToggleTheme, currentTheme = 'dark' }: P
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div ref={projectsGridRef} className="grid grid-cols-1 gap-8 md:grid-cols-2">
               {isLoading
-                ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+                ? Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} data-project-reveal className="works-card h-full min-w-0"><SkeletonCard /></div>
+                  ))
                 : sortedProjects.map((project) => (
-                    <ProjectCard
-                      key={project._id}
-                      project={project}
-                      onImageClick={() =>
-                        project.imageUrl &&
-                        setSelectedProjectImage({ src: project.imageUrl, title: project.title })
-                      }
-                    />
+                    <div key={project._id} data-project-reveal className="works-card h-full min-w-0">
+                      <ProjectCard
+                        project={project}
+                        onImageClick={() =>
+                          project.imageUrl &&
+                          setSelectedProjectImage({ src: project.imageUrl, title: project.title })
+                        }
+                      />
+                    </div>
                   ))}
             </div>
           </div>

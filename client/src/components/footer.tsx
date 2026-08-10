@@ -19,7 +19,8 @@ export default function Footer() {
               <li><button onClick={() => document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' })} className="footer-link transition duration-300">Home</button></li>
               <li><button onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })} className="footer-link transition duration-300">About</button></li>
               <li><button onClick={() => document.getElementById('works')?.scrollIntoView({ behavior: 'smooth' })} className="footer-link transition duration-300">Projects</button></li>
-              <li><a href="https://github.com/Atifhasan250" target="_blank" rel="noopener noreferrer" className="footer-link transition duration-300">GitHub</a></li>
+              <li><button onClick={() => document.getElementById('timeline')?.scrollIntoView({ behavior: 'smooth' })} className="footer-link transition duration-300">Timeline</button></li>
+              <li><button onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })} className="footer-link transition duration-300">Capabilities</button></li>
             </ul>
           </div>
 
@@ -39,6 +40,7 @@ export default function Footer() {
               <li><a href="https://www.facebook.com/atifhasan250" target="_blank" rel="noopener noreferrer" className="footer-link transition duration-300">Facebook</a></li>
               <li><a href="https://www.linkedin.com/in/atifhasan250/" target="_blank" rel="noopener noreferrer" className="footer-link transition duration-300">LinkedIn</a></li>
               <li><a href="https://www.instagram.com/_atif_hasan_/" target="_blank" rel="noopener noreferrer" className="footer-link transition duration-300">Instagram</a></li>
+              <li><a href="https://github.com/Atifhasan250" target="_blank" rel="noopener noreferrer" className="footer-link transition duration-300">GitHub</a></li>
             </ul>
           </div>
         </div>

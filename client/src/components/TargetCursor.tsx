@@ -12,7 +12,7 @@ export interface TargetCursorProps {
 
 const TargetCursor: React.FC<TargetCursorProps> = ({
   targetSelector = '.cursor-target',
-  spinDuration = 2,
+  spinDuration = 4,
   hideDefaultCursor = true,
   hoverDuration = 0.2,
   parallaxOn = true
@@ -78,8 +78,9 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
     gsap.set(cursor, {
       xPercent: -50,
       yPercent: -50,
-      x: window.innerWidth / 2,
-      y: window.innerHeight / 2
+      x: -100,
+      y: -100,
+      autoAlpha: 0
     });
 
     const createSpinTimeline = () => {
@@ -122,8 +123,21 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
 
     tickerFnRef.current = tickerFn;
 
-    const moveHandler = (e: MouseEvent) => moveCursor(e.clientX, e.clientY);
+    let hasPointerPosition = false;
+    const moveHandler = (e: MouseEvent) => {
+      if (!hasPointerPosition) {
+        hasPointerPosition = true;
+        gsap.set(cursor, { x: e.clientX, y: e.clientY, autoAlpha: 1 });
+        return;
+      }
+      moveCursor(e.clientX, e.clientY);
+    };
+    const windowLeaveHandler = () => {
+      hasPointerPosition = false;
+      gsap.set(cursor, { x: -100, y: -100, autoAlpha: 0 });
+    };
     window.addEventListener('mousemove', moveHandler);
+    document.documentElement.addEventListener('mouseleave', windowLeaveHandler);
 
     const scrollHandler = () => {
       if (!activeTarget || !cursorRef.current) return;
@@ -191,14 +205,21 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
 
       const rect = target.getBoundingClientRect();
       const { borderWidth, cornerSize } = constants;
+      const configuredPadding = Number(target.getAttribute('data-cursor-padding'));
+      const roomyTarget = target.matches('.nav-link, .social-icon, .theme-toggle, .logomark-link');
+      const targetPadding = Number.isFinite(configuredPadding) && configuredPadding > 0
+        ? configuredPadding
+        : roomyTarget
+          ? 7
+          : borderWidth;
       const cursorX = gsap.getProperty(cursorRef.current, 'x') as number;
       const cursorY = gsap.getProperty(cursorRef.current, 'y') as number;
 
       targetCornerPositionsRef.current = [
-        { x: rect.left - borderWidth, y: rect.top - borderWidth },
-        { x: rect.right + borderWidth - cornerSize, y: rect.top - borderWidth },
-        { x: rect.right + borderWidth - cornerSize, y: rect.bottom + borderWidth - cornerSize },
-        { x: rect.left - borderWidth, y: rect.bottom + borderWidth - cornerSize }
+        { x: rect.left - targetPadding, y: rect.top - targetPadding },
+        { x: rect.right + targetPadding - cornerSize, y: rect.top - targetPadding },
+        { x: rect.right + targetPadding - cornerSize, y: rect.bottom + targetPadding - cornerSize },
+        { x: rect.left - targetPadding, y: rect.bottom + targetPadding - cornerSize }
       ];
 
       isActiveRef.current = true;
@@ -269,6 +290,7 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
         gsap.ticker.remove(tickerFnRef.current);
       }
       window.removeEventListener('mousemove', moveHandler);
+      document.documentElement.removeEventListener('mouseleave', windowLeaveHandler);
       window.removeEventListener('mouseover', enterHandler as EventListener);
       window.removeEventListener('scroll', scrollHandler);
       window.removeEventListener('mousedown', mouseDownHandler);

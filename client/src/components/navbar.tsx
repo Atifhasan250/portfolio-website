@@ -41,6 +41,7 @@ export default function Navbar({ onToggleTheme, currentTheme = 'dark' }: NavbarP
     { label: 'Home', ariaLabel: 'Go to home page', action: () => scrollToSection('hero') },
     { label: 'About', ariaLabel: 'Learn about us', action: () => scrollToSection('about') },
     { label: 'Works', ariaLabel: 'View our works', action: () => scrollToSection('works') },
+    { label: 'Timeline', ariaLabel: 'View my timeline', action: () => scrollToSection('timeline') },
     { label: 'Contact', ariaLabel: 'Get in touch', action: () => scrollToSection('contact') }
   ];
 
@@ -65,10 +66,11 @@ export default function Navbar({ onToggleTheme, currentTheme = 'dark' }: NavbarP
         </button>
 
         <div className="hidden md:flex items-center space-x-8 font-medium ml-auto mr-6">
-          <button onClick={() => scrollToSection('hero')} className="nav-link">Home</button>
-          <button onClick={() => scrollToSection('about')} className="nav-link">About</button>
-          <button onClick={() => scrollToSection('works')} className="nav-link">Works</button>
-          <button onClick={() => scrollToSection('contact')} className="nav-link">Contact</button>
+          <button onClick={() => scrollToSection('hero')} className="nav-link" data-cursor-padding="7">Home</button>
+          <button onClick={() => scrollToSection('about')} className="nav-link" data-cursor-padding="7">About</button>
+          <button onClick={() => scrollToSection('works')} className="nav-link" data-cursor-padding="7">Works</button>
+          <button onClick={() => scrollToSection('timeline')} className="nav-link" data-cursor-padding="7">Timeline</button>
+          <button onClick={() => scrollToSection('contact')} className="nav-link" data-cursor-padding="7">Contact</button>
         </div>
 
         <div className="ml-auto flex items-center gap-3 md:gap-4">

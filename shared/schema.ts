@@ -33,10 +33,10 @@ export interface Project {
 // ─── Contact ──────────────────────────────────────────────────────────────────
 
 export const insertContactSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Must be a valid email'),
-  subject: z.string().min(1, 'Subject is required'),
-  message: z.string().min(1, 'Message is required'),
+  name: z.string().trim().min(1, 'Name is required').max(100, 'Name is too long'),
+  email: z.string().trim().email('Must be a valid email').max(254, 'Email is too long'),
+  subject: z.string().trim().min(1, 'Subject is required').max(150, 'Subject is too long'),
+  message: z.string().trim().min(1, 'Message is required').max(5000, 'Message is too long'),
 });
 
 export type InsertContact = z.infer<typeof insertContactSchema>;
