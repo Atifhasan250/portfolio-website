@@ -50,6 +50,83 @@ export interface Contact {
   createdAt: string;
 }
 
+// Analytics is intentionally session-only: no persistent visitor id or raw IP.
+export const analyticsEventSchema = z.object({
+  type: z.enum(['page_view', 'project_click']),
+  sessionId: z.string().regex(/^[a-zA-Z0-9_-]{16,80}$/),
+  path: z.string().trim().min(1).max(240),
+  referrer: z.string().trim().max(180).optional().default('Direct'),
+  projectId: z.string().trim().max(80).optional(),
+  projectLabel: z.string().trim().max(120).optional(),
+  utmSource: z.string().trim().max(100).optional(),
+  utmCampaign: z.string().trim().max(100).optional(),
+}).strict().superRefine((event, ctx) => {
+  if (event.type === 'project_click' && !event.projectId) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['projectId'], message: 'projectId is required for project clicks' });
+  }
+});
+
+export const analyticsBatchSchema = z.object({
+  events: z.array(analyticsEventSchema).min(1).max(20),
+}).strict();
+
+export type AnalyticsEventInput = z.infer<typeof analyticsEventSchema>;
+
+export interface AnalyticsMetric {
+  current: number;
+  previous: number;
+  delta: number | null;
+}
+
+export interface AnalyticsSummary {
+  range: 7 | 30 | 90;
+  generatedAt: string;
+  metrics: {
+    pageViews: AnalyticsMetric;
+    sessions: AnalyticsMetric;
+    projectClicks: AnalyticsMetric;
+    contacts: AnalyticsMetric;
+    conversionRate: AnalyticsMetric;
+  };
+  trend: Array<{ date: string; pageViews: number; sessions: number; projectClicks: number; contacts: number }>;
+  topProjects: Array<{ projectId: string; label: string; value: number }>;
+  sources: Array<{ label: string; value: number }>;
+  devices: Array<{ label: string; value: number }>;
+  countries: Array<{ label: string; value: number }>;
+}
+
+export const auditActions = [
+  'auth.login', 'auth.login_failed', 'auth.logout',
+  'project.create', 'project.update', 'project.delete', 'project.reorder', 'project.image_replace',
+  'audit.export',
+] as const;
+
+export type AuditAction = typeof auditActions[number];
+export type AuditOutcome = 'success' | 'failure';
+
+export interface AuditLog {
+  _id: string;
+  actor: string;
+  action: AuditAction;
+  outcome: AuditOutcome;
+  targetType: string;
+  targetId?: string;
+  targetLabel?: string;
+  changedFields: string[];
+  ipHash: string;
+  device: string;
+  message?: string;
+  createdAt: string;
+}
+
+export interface PaginatedAuditLogs {
+  items: AuditLog[];
+  page: number;
+  limit: number;
+  total: number;
+  pages: number;
+}
+
 // ─── Legacy User type (kept for compatibility) ────────────────────────────────
 export interface User {
   id: string;

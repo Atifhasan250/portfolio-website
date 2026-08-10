@@ -1,6 +1,7 @@
 import { lazy, Suspense, type FormEvent, useEffect, useRef, useState } from 'react';
 import { AlertCircle, CheckCircle2, MapPin } from 'lucide-react';
 import FadeUpOnScroll from './FadeUpOnScroll';
+import { getAnalyticsSession } from '@/lib/analytics';
 
 const ContactMap = lazy(() => import('./contact-map'));
 
@@ -91,9 +92,10 @@ export default function ContactSection() {
     const requestTimeout = window.setTimeout(() => controller.abort(), 15000);
 
     try {
+      const analyticsSession = getAnalyticsSession();
       const response = await fetch('/api/contacts', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...(analyticsSession ? { 'X-Analytics-Session': analyticsSession } : {}) },
         body: JSON.stringify({
           name: formData.get('name'),
           email: formData.get('email'),
