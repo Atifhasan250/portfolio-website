@@ -10,8 +10,8 @@ export default function AboutSection() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               About Me
             </h2>
-            <p className="text-lg mb-6 text-center md:text-left">
-              I'm Atif Hasan, a web and mobile app developer from Bogura, Bangladesh. I enjoy turning ideas into polished, practical digital products that people can actually use with ease. My focus is simple: clean design, solid code, smooth performance, and experiences that feel good on every screen.
+            <p className="mb-6 text-center text-lg md:text-left">
+              I'm Atif Hasan, a Civil Engineering student at IUT from Bogura. I've been coding for over six years, and most of what I know came from building things myself. I work on web, mobile, AI, and IoT projects, both personal and for clients. I still learn the same way I started, picking an idea and building it until it works.
             </p>
 
             {/* Social Links */}
@@ -63,7 +63,15 @@ export default function AboutSection() {
             </div>
           </div>
           <div className="flex w-full justify-center md:w-1/2">
-            <img src="https://avatars.githubusercontent.com/u/83109245?v=4" alt="Atif Hasan GitHub Avatar" className="h-auto w-full max-w-xs rounded-lg transition-transform duration-300 hover:scale-105" />
+            <img
+              src="https://avatars.githubusercontent.com/u/83109245?v=4"
+              alt="Atif Hasan GitHub Avatar"
+              width="320"
+              height="320"
+              loading="lazy"
+              decoding="async"
+              className="h-auto w-full max-w-xs rounded-lg transition-transform duration-300 hover:scale-105"
+            />
           </div>
         </div>
       </FadeUpOnScroll>

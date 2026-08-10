@@ -46,10 +46,6 @@ export default function HeroSection() {
     };
   }, []);
 
-  const handleViewWorks = () => {
-    setLocation('/projects');
-  };
-
   const scrollToContact = () => {
     const element = document.getElementById('contact');
     if (element) {
@@ -64,6 +60,10 @@ export default function HeroSection() {
           <img
             src="/profile-image.png"
             alt="Atif Hasan Profile Picture"
+            width="853"
+            height="1280"
+            fetchPriority="high"
+            decoding="async"
             className="hero-image opacity-0 h-auto w-full max-w-[230px] rounded-2xl sm:max-w-[240px] md:max-w-sm"
           />
         </div>
@@ -85,9 +85,16 @@ export default function HeroSection() {
           </p>
           <div className="flex flex-row justify-center gap-3 sm:gap-4 md:justify-start">
             <div className="hero-btn opacity-0">
-              <button onClick={handleViewWorks} className="cta-button text-sm px-6 py-2.5 sm:text-base sm:px-8 sm:py-3">
+              <a
+                href="/projects"
+                onClick={(event) => {
+                  event.preventDefault();
+                  setLocation('/projects');
+                }}
+                className="cta-button inline-block text-sm px-6 py-2.5 sm:text-base sm:px-8 sm:py-3"
+              >
                 View Works
-              </button>
+              </a>
             </div>
             <div className="hero-btn opacity-0">
               <button onClick={scrollToContact} className="outline-button text-sm px-6 py-2.5 sm:text-base sm:px-8 sm:py-3">

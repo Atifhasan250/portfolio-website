@@ -372,9 +372,9 @@ export function TechStackSection() {
             ].filter(group => group.technologies.length > 0).map((group) => (
               <div key={group.label ?? 'technologies'} className="tech-experience-group max-w-4xl mx-auto">
                 {group.label && (
-                  <h4 className="tech-experience-label mb-4 sm:mb-5">
+                  <h3 className="tech-experience-label mb-4 sm:mb-5">
                     {group.label}
-                  </h4>
+                  </h3>
                 )}
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
                   {group.technologies.map((tech, index) => {
@@ -392,10 +392,10 @@ export function TechStackSection() {
                         </div>
 
                         <div className="flex-1 flex flex-col justify-center">
-                          <h5 className="font-medium transition-colors duration-300 text-xs sm:text-sm md:text-base mb-1 leading-tight"
+                          <h4 className="font-medium transition-colors duration-300 text-xs sm:text-sm md:text-base mb-1 leading-tight"
                             style={{ color: 'var(--color-text-heading)' }}>
                             {tech.name}
-                          </h5>
+                          </h4>
                           <p className="text-xs transition-colors duration-300 line-clamp-2 leading-tight hidden sm:block"
                             style={{ color: 'var(--color-text-muted)' }}>
                             {tech.description}
