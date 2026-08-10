@@ -1,16 +1,112 @@
-import { useForm, ValidationError } from '@formspree/react';
+import { type FormEvent, useEffect, useState } from 'react';
+import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import FadeUpOnScroll from './FadeUpOnScroll';
 
+type FieldName = 'name' | 'email' | 'subject' | 'message';
+type FieldErrors = Partial<Record<FieldName, string>>;
 
 export default function ContactSection() {
-  const [state, handleSubmit] = useForm("mrblaeww");
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+
+  useEffect(() => {
+    if (status !== 'success') return;
+
+    const timeout = window.setTimeout(() => setStatus('idle'), 6000);
+    return () => window.clearTimeout(timeout);
+  }, [status]);
+
+  const clearFieldError = (field: FieldName) => {
+    setFieldErrors((current) => {
+      if (!current[field]) return current;
+      const next = { ...current };
+      delete next[field];
+      return next;
+    });
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    setStatus('submitting');
+    setErrorMessage('');
+    setFieldErrors({});
+
+    const controller = new AbortController();
+    const requestTimeout = window.setTimeout(() => controller.abort(), 15000);
+
+    try {
+      const response = await fetch('/api/contacts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.get('name'),
+          email: formData.get('email'),
+          subject: formData.get('subject'),
+          message: formData.get('message'),
+        }),
+        signal: controller.signal,
+      });
+      const result = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        if (response.status === 400 && Array.isArray(result?.errors)) {
+          const nextErrors = result.errors.reduce((errors: FieldErrors, issue: { path?: unknown[]; message?: string }) => {
+            const field = issue.path?.[0];
+            if (typeof field === 'string' && ['name', 'email', 'subject', 'message'].includes(field)) {
+              errors[field as FieldName] = issue.message || 'Please check this field.';
+            }
+            return errors;
+          }, {});
+
+          setFieldErrors(nextErrors);
+          const firstInvalidField = Object.keys(nextErrors)[0];
+          if (firstInvalidField) {
+            const invalidControl = form.elements.namedItem(firstInvalidField);
+            if (invalidControl instanceof HTMLElement) {
+              invalidControl.focus();
+              invalidControl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }
+          throw new Error('Please check the highlighted fields and try again.');
+        }
+
+        throw new Error(result?.message || 'Your message could not be sent. Please try again.');
+      }
+
+      form.reset();
+      setStatus('success');
+    } catch (error) {
+      const message = error instanceof DOMException && error.name === 'AbortError'
+        ? 'The request took too long. Your message is still here - please try again.'
+        : error instanceof TypeError
+          ? 'Could not connect right now. Check your connection and try again.'
+          : error instanceof Error
+            ? error.message
+            : 'Your message could not be sent. Please try again.';
+
+      setErrorMessage(message);
+      setStatus('error');
+    } finally {
+      window.clearTimeout(requestTimeout);
+    }
+  };
+
+  const fieldErrorProps = (field: FieldName) => ({
+    'aria-invalid': Boolean(fieldErrors[field]),
+    'aria-describedby': fieldErrors[field] ? `${field}-error` : undefined,
+    onChange: () => clearFieldError(field),
+  });
 
   return (
     <section id="contact" className="py-20 px-4 md:px-8">
       <FadeUpOnScroll>
         <div className="container mx-auto max-w-6xl section-card-no-hover">
           <div className="flex justify-center w-full">
-            <h2 className="text-3xl font-bold mb-8 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
               Get In Touch
             </h2>
           </div>
@@ -86,12 +182,6 @@ export default function ContactSection() {
 
           {/* Right column with the contact form */}
           <div className="w-full md:w-1/2">
-            {state.succeeded ? (
-              <div className="bg-green-600/20 border border-green-500 rounded-lg p-6 text-center">
-                <h3 className="text-xl font-semibold text-green-400 mb-2">Thank you!</h3>
-                <p>Your message has been sent successfully. I'll get back to you soon!</p>
-              </div>
-            ) : (
               <form className="space-y-6" onSubmit={handleSubmit}>
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium mb-2">Name</label>
@@ -100,15 +190,12 @@ export default function ContactSection() {
                     id="name" 
                     name="name" 
                     placeholder="Your Name" 
-                    className="w-full p-3.5 rounded-2xl transition duration-300"
+                    maxLength={100}
+                    className="w-full p-3.5 rounded-2xl transition duration-300 aria-[invalid=true]:border-red-500/50"
                     required
+                    {...fieldErrorProps('name')}
                   />
-                  <ValidationError 
-                    prefix="Name" 
-                    field="name"
-                    errors={state.errors}
-                    className="text-red-400 text-sm mt-1"
-                  />
+                  {fieldErrors.name && <p id="name-error" className="mt-1.5 text-sm text-red-400">{fieldErrors.name}</p>}
                 </div>
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium mb-2">Email</label>
@@ -117,15 +204,12 @@ export default function ContactSection() {
                     id="email" 
                     name="email" 
                     placeholder="Your Email" 
-                    className="w-full p-3.5 rounded-2xl transition duration-300"
+                    maxLength={254}
+                    className="w-full p-3.5 rounded-2xl transition duration-300 aria-[invalid=true]:border-red-500/50"
                     required
+                    {...fieldErrorProps('email')}
                   />
-                  <ValidationError 
-                    prefix="Email" 
-                    field="email"
-                    errors={state.errors}
-                    className="text-red-400 text-sm mt-1"
-                  />
+                  {fieldErrors.email && <p id="email-error" className="mt-1.5 text-sm text-red-400">{fieldErrors.email}</p>}
                 </div>
                 <div>
                   <label htmlFor="subject" className="block text-sm font-medium mb-2">Subject</label>
@@ -134,15 +218,12 @@ export default function ContactSection() {
                     id="subject" 
                     name="subject" 
                     placeholder="Subject of your message" 
-                    className="w-full p-3.5 rounded-2xl transition duration-300"
+                    maxLength={150}
+                    className="w-full p-3.5 rounded-2xl transition duration-300 aria-[invalid=true]:border-red-500/50"
                     required
+                    {...fieldErrorProps('subject')}
                   />
-                  <ValidationError 
-                    prefix="Subject" 
-                    field="subject"
-                    errors={state.errors}
-                    className="text-red-400 text-sm mt-1"
-                  />
+                  {fieldErrors.subject && <p id="subject-error" className="mt-1.5 text-sm text-red-400">{fieldErrors.subject}</p>}
                 </div>
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium mb-2">Message</label>
@@ -151,25 +232,42 @@ export default function ContactSection() {
                     name="message" 
                     rows={4} 
                     placeholder="Your Message" 
-                    className="w-full p-3.5 rounded-2xl transition duration-300 resize-y min-h-[140px]"
+                    maxLength={5000}
+                    className="w-full p-3.5 rounded-2xl transition duration-300 resize-y min-h-[140px] aria-[invalid=true]:border-red-500/50"
                     required
+                    {...fieldErrorProps('message')}
                   ></textarea>
-                  <ValidationError 
-                    prefix="Message" 
-                    field="message"
-                    errors={state.errors}
-                    className="text-red-400 text-sm mt-1"
-                  />
+                  {fieldErrors.message && <p id="message-error" className="mt-1.5 text-sm text-red-400">{fieldErrors.message}</p>}
                 </div>
                 <button 
                   type="submit" 
-                  disabled={state.submitting}
+                  disabled={status === 'submitting'}
                   className="w-full cta-button disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {state.submitting ? 'Sending...' : 'Send Message'}
+                  {status === 'submitting' ? 'Sending...' : 'Send Message'}
                 </button>
+
+                <div aria-live="polite" aria-atomic="true">
+                  {status === 'success' && (
+                    <div className="flex items-start gap-3 rounded-2xl border border-emerald-500/25 bg-emerald-500/[0.07] px-4 py-3 text-left">
+                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" aria-hidden="true" />
+                      <div>
+                        <p className="text-sm font-semibold text-emerald-300">Message sent</p>
+                        <p className="mt-0.5 text-sm opacity-70">Thanks for reaching out. I'll get back to you soon.</p>
+                      </div>
+                    </div>
+                  )}
+                  {status === 'error' && (
+                    <div role="alert" className="flex items-start gap-3 rounded-2xl border border-red-500/25 bg-red-500/[0.06] px-4 py-3 text-left">
+                      <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-400" aria-hidden="true" />
+                      <div>
+                        <p className="text-sm font-semibold text-red-300">Message not sent</p>
+                        <p className="mt-0.5 text-sm opacity-70">{errorMessage}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </form>
-            )}
           </div>
         </div>
         </div>

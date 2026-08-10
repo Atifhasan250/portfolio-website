@@ -4,6 +4,8 @@ import multer from 'multer';
 import { storage } from './storage.js';
 import { generateToken, setAuthCookie, clearAuthCookie, requireAuth } from './auth.js';
 import { uploadToImageKit, deleteFromImageKit } from './imagekit.js';
+import { sendContactEmail } from './resend.js';
+import { insertContactSchema } from '../shared/schema.js';
 import { z } from 'zod';
 import rateLimit from 'express-rate-limit';
 
@@ -30,6 +32,14 @@ const loginLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+const contactLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: { success: false, message: 'Too many messages. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // ─── Zod schemas ───────────────────────────────────────────────────────────────
 
 const projectSchema = z.object({
@@ -39,13 +49,6 @@ const projectSchema = z.object({
   technologies: z.array(z.string()).min(1, 'At least one technology is required'),
   featured: z.boolean().optional(),
   order: z.number().optional(),
-});
-
-const contactSchema = z.object({
-  name: z.string().min(1),
-  email: z.string().email(),
-  subject: z.string().min(1),
-  message: z.string().min(1),
 });
 
 // ─── Routes ───────────────────────────────────────────────────────────────────
@@ -64,16 +67,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // ── Public: contact form ──────────────────────────────────────────────────
-  app.post('/api/contacts', async (req, res) => {
+  app.post('/api/contacts', contactLimiter, async (req, res) => {
     try {
-      const data = contactSchema.parse(req.body);
-      const contact = await storage.createContact(data);
-      res.json({ success: true, contact });
+      const data = insertContactSchema.parse(req.body);
+      await sendContactEmail(data);
+
+      try {
+        await storage.createContact(data);
+      } catch (storageError) {
+        console.error('[POST /api/contacts] Message sent, but database save failed:', storageError);
+      }
+
+      res.json({ success: true });
     } catch (err) {
       if (err instanceof z.ZodError) {
         res.status(400).json({ success: false, message: 'Validation error', errors: err.errors });
       } else {
-        res.status(500).json({ success: false, message: 'Failed to save contact message' });
+        console.error('[POST /api/contacts]', err);
+        res.status(502).json({ success: false, message: 'Your message could not be sent. Please try again.' });
       }
     }
   });
