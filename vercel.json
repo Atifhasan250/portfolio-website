@@ -31,7 +31,7 @@
       "dest": "/projects.html"
     },
     {
-      "src": "^/admin(?:/dashboard)?/?$",
+      "src": "^/admin(?:/(?:dashboard|analytics|audit-log))?/?$",
       "dest": "/admin.html",
       "headers": {
         "X-Robots-Tag": "noindex, nofollow"

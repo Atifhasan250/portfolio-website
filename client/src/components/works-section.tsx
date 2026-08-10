@@ -5,6 +5,7 @@ import FadeUpOnScroll from './FadeUpOnScroll';
 
 import SpotlightCard from './SpotlightCard';
 import { useProjectCardReveal } from '@/hooks/use-project-card-reveal';
+import { trackProjectClick } from '@/lib/analytics';
 
 function getOptimizedImageUrl(url: string, width: number = 800) {
   if (!url || !url.includes('ik.imagekit.io')) return url;
@@ -93,7 +94,7 @@ function ProjectCard({
           ))}
         </div>
         <div className="mt-auto">
-          <a href={project.link} target="_blank" rel="noopener noreferrer" className="btn-primary inline-block px-6 py-3 text-sm sm:text-base">
+          <a href={project.link} target="_blank" rel="noopener noreferrer" onClick={() => trackProjectClick(project._id, project.title)} className="btn-primary inline-block px-6 py-3 text-sm sm:text-base">
             View Project
           </a>
         </div>

@@ -17,6 +17,8 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import AdminAnalytics from './admin-analytics';
+import AdminAuditLog from './admin-audit-log';
 
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -460,8 +462,9 @@ function DeleteModal({ project, onClose, onConfirm, deleting }: { project: Proje
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 
 export default function AdminDashboard() {
-  const [, navigate] = useLocation();
+  const [location, navigate] = useLocation();
   const qc = useQueryClient();
+  const activeView = location === '/admin/analytics' ? 'analytics' : location === '/admin/audit-log' ? 'audit' : 'projects';
 
   const [search, setSearch] = useState('');
   const [filterFeatured, setFilterFeatured] = useState<'all' | 'featured' | 'regular'>('all');
@@ -673,7 +676,7 @@ export default function AdminDashboard() {
 
         <nav className="admin-sidebar-nav">
           <div className="admin-sidebar-nav-section-label">Content</div>
-          <button type="button" className="admin-sidebar-nav-item admin-sidebar-nav-item-active" id="admin-nav-projects">
+          <button type="button" onClick={() => { navigate('/admin/dashboard'); setSidebarOpen(false); }} className={`admin-sidebar-nav-item ${activeView === 'projects' ? 'admin-sidebar-nav-item-active' : ''}`} id="admin-nav-projects">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" />
               <rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
@@ -681,30 +684,18 @@ export default function AdminDashboard() {
             Projects
             <span className="admin-sidebar-badge">{projects.length}</span>
           </button>
-          <button type="button" className="admin-sidebar-nav-item admin-sidebar-nav-item-disabled" disabled>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
-            </svg>
-            Profile<span className="admin-sidebar-soon">Soon</span>
-          </button>
-          <button type="button" className="admin-sidebar-nav-item admin-sidebar-nav-item-disabled" disabled>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-            </svg>
-            Testimonials<span className="admin-sidebar-soon">Soon</span>
-          </button>
-          <button type="button" className="admin-sidebar-nav-item admin-sidebar-nav-item-disabled" disabled>
+          <div className="admin-sidebar-nav-section-label" style={{ marginTop: '1rem' }}>Insights</div>
+          <button type="button" onClick={() => { navigate('/admin/analytics'); setSidebarOpen(false); }} className={`admin-sidebar-nav-item ${activeView === 'analytics' ? 'admin-sidebar-nav-item-active' : ''}`}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
             </svg>
-            Analytics<span className="admin-sidebar-soon">Soon</span>
+            Analytics
           </button>
-          <div className="admin-sidebar-nav-section-label" style={{ marginTop: '1rem' }}>Settings</div>
-          <button type="button" className="admin-sidebar-nav-item admin-sidebar-nav-item-disabled" disabled>
+          <button type="button" onClick={() => { navigate('/admin/audit-log'); setSidebarOpen(false); }} className={`admin-sidebar-nav-item ${activeView === 'audit' ? 'admin-sidebar-nav-item-active' : ''}`}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><path d="M9 12l2 2 4-4" />
             </svg>
-            Settings<span className="admin-sidebar-soon">Soon</span>
+            Audit Log
           </button>
         </nav>
 
@@ -737,7 +728,7 @@ export default function AdminDashboard() {
               <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
             </svg>
           </button>
-          <div className="admin-topbar-title">Projects Manager</div>
+          <div className="admin-topbar-title">{activeView === 'analytics' ? 'Analytics' : activeView === 'audit' ? 'Audit Log' : 'Projects Manager'}</div>
           <div className="admin-topbar-actions">
             <a href="/" target="_blank" rel="noopener noreferrer" className="admin-topbar-view-btn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -752,6 +743,7 @@ export default function AdminDashboard() {
 
         {/* Content */}
         <div className="admin-content">
+          {activeView === 'analytics' ? <AdminAnalytics /> : activeView === 'audit' ? <AdminAuditLog /> : <>
           {/* Stats */}
           <div className="admin-stats-row">
             <StatCard icon={<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>} label="Total Projects" value={isLoading ? '…' : projects.length} sub="In your portfolio" />
@@ -831,6 +823,7 @@ export default function AdminDashboard() {
               </SortableContext>
             </DndContext>
           )}
+          </>}
         </div>
       </main>
 

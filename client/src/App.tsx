@@ -12,6 +12,7 @@ import AdminLogin from "@/pages/admin-login";
 import AdminDashboard from "@/pages/admin-dashboard";
 import Preloader from '@/components/preloader';
 import ClientSeo from '@/components/client-seo';
+import { trackPageView } from '@/lib/analytics';
 
 import Projects from '@/pages/projects';
 
@@ -35,6 +36,12 @@ function Router({
         <AdminLogin />
       </Route>
       <Route path="/admin/dashboard">
+        <AdminDashboard />
+      </Route>
+      <Route path="/admin/analytics">
+        <AdminDashboard />
+      </Route>
+      <Route path="/admin/audit-log">
         <AdminDashboard />
       </Route>
       {/* Fallback to 404 */}
@@ -125,6 +132,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
+        <AnalyticsTracker />
         <ClientSeo />
         <Toaster />
         <Preloader />
@@ -133,6 +141,14 @@ function App() {
       </TooltipProvider>
     </QueryClientProvider>
   );
+}
+
+function AnalyticsTracker() {
+  const [location] = useLocation();
+  useEffect(() => {
+    if (!location.startsWith('/admin')) trackPageView(location);
+  }, [location]);
+  return null;
 }
 
 function ConditionalCursor() {
