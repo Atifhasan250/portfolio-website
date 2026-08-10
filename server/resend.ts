@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import type { InsertContact } from '../shared/schema.js';
+import { renderContactEmail } from './contact-email.js';
 
 const DEFAULT_CONTACT_EMAIL = 'atifhasan000000@gmail.com';
 const DEFAULT_FROM_EMAIL = 'Portfolio Contact <onboarding@resend.dev>';
@@ -19,18 +20,16 @@ function getResendClient() {
 
 export async function sendContactEmail(contact: InsertContact) {
   const client = getResendClient();
+  const emailContent = renderContactEmail(contact);
+  const safeSubject = contact.subject.replace(/[\r\n]+/g, ' ').trim();
   const { error } = await client.emails.send({
     from: process.env.RESEND_FROM_EMAIL || DEFAULT_FROM_EMAIL,
     to: [process.env.CONTACT_TO_EMAIL || DEFAULT_CONTACT_EMAIL],
     replyTo: contact.email,
-    subject: `Portfolio enquiry: ${contact.subject}`,
-    text: [
-      `Name: ${contact.name}`,
-      `Email: ${contact.email}`,
-      `Subject: ${contact.subject}`,
-      '',
-      contact.message,
-    ].join('\n'),
+    subject: `New portfolio enquiry — ${safeSubject}`,
+    html: emailContent.html,
+    text: emailContent.text,
+    tags: [{ name: 'source', value: 'portfolio_contact' }],
   });
 
   if (error) {

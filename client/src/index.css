@@ -1001,7 +1001,6 @@
     border-radius: 999px;
   }
 
-
   .project-lightbox {
     position: fixed;
     inset: 0;
@@ -1228,6 +1227,55 @@
       font-size: 16px;
     }
   }
+}
+
+.contact-map .maplibregl-canvas {
+  outline: none;
+}
+
+.contact-map .maplibregl-ctrl-group {
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.65rem;
+  background: rgba(17, 19, 24, 0.92);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
+}
+
+.contact-map .maplibregl-ctrl button {
+  min-width: 44px;
+  min-height: 44px;
+  color: #e8e6e1;
+}
+
+.contact-map .maplibregl-ctrl button:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.contact-map .maplibregl-ctrl-icon {
+  filter: brightness(0) invert(1);
+}
+
+.contact-map-marker > span {
+  position: relative;
+  display: block;
+  width: 28px;
+  height: 28px;
+  border-radius: 50% 50% 50% 0;
+  background: #e8e6e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  transform: rotate(-45deg);
+}
+
+.contact-map-marker > span::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #111318;
+  content: '';
+  transform: translate(-50%, -50%);
 }
 
 /* ══════════════════════════════════════════════════════════════
