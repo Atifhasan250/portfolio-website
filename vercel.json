@@ -23,12 +23,31 @@
       "dest": "/assets/$1"
     },
     {
-      "src": "^/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg|json))$",
+      "src": "^/(.*\\.(js|css|png|webp|jpg|jpeg|gif|ico|svg|json|txt|xml))$",
       "dest": "/$1"
     },
     {
-      "src": "/(.*)",
+      "src": "^/projects/?$",
+      "dest": "/projects.html"
+    },
+    {
+      "src": "^/admin(?:/dashboard)?/?$",
+      "dest": "/admin.html",
+      "headers": {
+        "X-Robots-Tag": "noindex, nofollow"
+      }
+    },
+    {
+      "src": "^/?$",
       "dest": "/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "status": 404,
+      "dest": "/404.html",
+      "headers": {
+        "X-Robots-Tag": "noindex, nofollow"
+      }
     }
   ],
   "installCommand": "npm install",

@@ -45,11 +45,20 @@ export async function setupVite(app: Express, server: Server) {
     const url = req.originalUrl;
 
     try {
+      const pathname = new URL(url, 'http://localhost').pathname;
+      const entry = pathname === '/'
+        ? 'index.html'
+        : pathname === '/projects'
+          ? 'projects.html'
+          : pathname.startsWith('/admin')
+            ? 'admin.html'
+            : '404.html';
+      const status = entry === '404.html' ? 404 : 200;
       const clientTemplate = path.resolve(
         import.meta.dirname,
         "..",
         "client",
-        "index.html",
+        entry,
       );
 
       // always reload the index.html file from disk incase it changes
@@ -59,7 +68,10 @@ export async function setupVite(app: Express, server: Server) {
         `src="/src/main.tsx?v=${nanoid()}"`,
       );
       const page = await vite.transformIndexHtml(url, template);
-      res.status(200).set({ "Content-Type": "text/html" }).end(page);
+      if (entry === 'admin.html' || entry === '404.html') {
+        res.set('X-Robots-Tag', 'noindex, nofollow');
+      }
+      res.status(status).set({ "Content-Type": "text/html" }).end(page);
     } catch (e) {
       vite.ssrFixStacktrace(e as Error);
       next(e);
@@ -77,8 +89,18 @@ export function serveStatic(app: Express) {
 
   app.use(express.static(distPath));
 
-  // fall through to index.html if the file doesn't exist
+  app.get('/projects', (_req, res) => {
+    res.sendFile(path.resolve(distPath, 'projects.html'));
+  });
+  app.get(['/admin', '/admin/dashboard'], (_req, res) => {
+    res.set('X-Robots-Tag', 'noindex, nofollow');
+    res.sendFile(path.resolve(distPath, 'admin.html'));
+  });
+  app.get('/', (_req, res) => {
+    res.sendFile(path.resolve(distPath, 'index.html'));
+  });
   app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+    res.set('X-Robots-Tag', 'noindex, nofollow');
+    res.status(404).sendFile(path.resolve(distPath, '404.html'));
   });
 }

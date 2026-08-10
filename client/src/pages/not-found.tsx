@@ -12,8 +12,11 @@ export default function NotFound() {
           </div>
 
           <p className="mt-4 text-sm text-gray-600">
-            Did you forget to add the page to the router?
+            The page you requested does not exist or may have moved.
           </p>
+          <a href="/" className="mt-6 inline-flex font-medium text-gray-900 underline underline-offset-4">
+            Return to the homepage
+          </a>
         </CardContent>
       </Card>
     </div>
