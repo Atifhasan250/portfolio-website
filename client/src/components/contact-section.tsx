@@ -1,9 +1,61 @@
-import { type FormEvent, useEffect, useState } from 'react';
-import { AlertCircle, CheckCircle2 } from 'lucide-react';
+import { lazy, Suspense, type FormEvent, useEffect, useRef, useState } from 'react';
+import { AlertCircle, CheckCircle2, MapPin } from 'lucide-react';
 import FadeUpOnScroll from './FadeUpOnScroll';
+
+const ContactMap = lazy(() => import('./contact-map'));
 
 type FieldName = 'name' | 'email' | 'subject' | 'message';
 type FieldErrors = Partial<Record<FieldName, string>>;
+
+function MapPlaceholder() {
+  return (
+    <div
+      className="flex h-[250px] items-center justify-center rounded-2xl border sm:h-[280px]"
+      style={{ borderColor: 'var(--color-border-default)', backgroundColor: '#0c0e12' }}
+      aria-label="Loading location map"
+    >
+      <MapPin className="h-5 w-5 opacity-35" aria-hidden="true" />
+    </div>
+  );
+}
+
+function DeferredContactMap() {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host || shouldLoad) return;
+    if (!('IntersectionObserver' in window)) {
+      setShouldLoad(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setShouldLoad(true);
+        observer.disconnect();
+      },
+      { rootMargin: '400px 0px' },
+    );
+
+    observer.observe(host);
+    return () => observer.disconnect();
+  }, [shouldLoad]);
+
+  return (
+    <div ref={hostRef}>
+      {shouldLoad ? (
+        <Suspense fallback={<MapPlaceholder />}>
+          <ContactMap />
+        </Suspense>
+      ) : (
+        <MapPlaceholder />
+      )}
+    </div>
+  );
+}
 
 export default function ContactSection() {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
@@ -110,9 +162,9 @@ export default function ContactSection() {
               Get In Touch
             </h2>
           </div>
-        <div className="flex flex-col md:flex-row gap-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:items-start">
           {/* Left column with contact details */}
-          <div className="w-full md:w-1/2 flex flex-col justify-center">
+          <div className="flex w-full flex-col justify-center md:col-start-1 md:row-start-1">
             <p className="text-lg mb-4">
               Have a project in mind or just want to say hello? I'd love to hear from you. Fill out the form or reach out directly using the information below.
             </p>
@@ -181,7 +233,7 @@ export default function ContactSection() {
           </div>
 
           {/* Right column with the contact form */}
-          <div className="w-full md:w-1/2">
+          <div className="w-full md:col-start-2 md:row-span-2 md:row-start-1">
               <form className="space-y-6" onSubmit={handleSubmit}>
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium mb-2">Name</label>
@@ -268,6 +320,9 @@ export default function ContactSection() {
                   )}
                 </div>
               </form>
+          </div>
+          <div className="w-full md:col-start-1 md:row-start-2" aria-label="Location">
+            <DeferredContactMap />
           </div>
         </div>
         </div>

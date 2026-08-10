@@ -11,6 +11,7 @@ import NotFound from "@/pages/not-found";
 import AdminLogin from "@/pages/admin-login";
 import AdminDashboard from "@/pages/admin-dashboard";
 import Preloader from '@/components/preloader';
+import ClientSeo from '@/components/client-seo';
 
 import Projects from '@/pages/projects';
 
@@ -124,6 +125,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
+        <ClientSeo />
         <Toaster />
         <Preloader />
         <ConditionalCursor />

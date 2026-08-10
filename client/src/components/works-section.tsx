@@ -72,6 +72,8 @@ function ProjectCard({
               <img
                 src={getOptimizedImageUrl(project.imageUrl, 800)}
                 alt={project.title}
+                loading="lazy"
+                decoding="async"
                 className="project-card-media w-full h-64 md:h-80 object-cover object-top select-none pointer-events-none"
                 draggable={false}
               />
@@ -179,8 +181,10 @@ export default function WorksSection() {
           
           <FadeUpOnScroll>
           <div className="flex justify-center mt-16">
-            <button 
-              onClick={() => {
+            <a
+              href="/projects"
+              onClick={(event) => {
+                event.preventDefault();
                 sessionStorage.setItem('portfolio:home-scroll-y', String(window.scrollY));
                 sessionStorage.setItem('portfolio:opened-projects-from-home', 'true');
                 sessionStorage.removeItem('portfolio:restore-home-scroll');
@@ -189,7 +193,7 @@ export default function WorksSection() {
               className="cta-button"
             >
               See All Projects &rarr;
-            </button>
+            </a>
           </div>
           </FadeUpOnScroll>
       </div>
@@ -213,7 +217,7 @@ export default function WorksSection() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6l-12 12" />
               </svg>
             </button>
-            <img src={getOptimizedImageUrl(selectedProjectImage.src, 1600)} alt={selectedProjectImage.title} className="project-lightbox-image" />
+            <img src={getOptimizedImageUrl(selectedProjectImage.src, 1600)} alt={selectedProjectImage.title} className="project-lightbox-image" decoding="async" />
           </div>
         </div>
       )}

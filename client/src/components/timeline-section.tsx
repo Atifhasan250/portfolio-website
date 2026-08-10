@@ -2,53 +2,9 @@ import { useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import FadeUpOnScroll from './FadeUpOnScroll';
+import { timelineItems } from '@/data/timeline';
 
 gsap.registerPlugin(ScrollTrigger);
-
-const timelineItems = [
-  {
-    year: '2018–2020',
-    type: 'Problem solving',
-    title: 'It started with mathematics',
-    description: 'My interest in mathematics led me to several math olympiads and contests, where I picked up a few wins along the way.',
-  },
-  {
-    year: '2020–21',
-    type: 'First code',
-    title: 'Math led me to programming',
-    description: 'I came across code in a book that used Python to solve math problems with surprising ease. That curiosity pushed me to start learning programming.',
-  },
-  {
-    year: '2022',
-    type: 'Exploration',
-    title: 'Learning beyond one field',
-    description: 'I explored web development and graphic design, while joining competitive programming contests to build stronger problem-solving habits.',
-  },
-  {
-    year: '2023',
-    type: 'Foundations',
-    title: 'DSA, C++, and deeper web development',
-    description: 'I discovered data structures and algorithms, began learning them with C++, and moved further into web development with the MERN stack.',
-  },
-  {
-    year: '2024',
-    type: 'Client work',
-    title: 'Turning skills into real projects',
-    description: 'I built several personal projects of my own and also started developing real products for clients, learning how to turn real requirements into working software.',
-  },
-  {
-    year: '2025',
-    type: 'GenAI',
-    title: 'Adding AI to what I build',
-    description: 'After completing my HSC exams, I began learning generative AI and using it to add practical AI features to my personal projects.',
-  },
-  {
-    year: '2026',
-    type: 'Current chapter',
-    title: 'IUT and my first hackathons',
-    description: 'I joined IUT as a Civil Engineering student and entered several national hackathons, placing well even though the format was completely new to me.',
-  },
-];
 
 export default function TimelineSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -63,6 +19,7 @@ export default function TimelineSection() {
 
     const entries = Array.from(section.querySelectorAll<HTMLElement>('[data-timeline-entry]'));
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const mobileTimeline = window.matchMedia('(max-width: 767px)').matches;
 
     const setActiveEntry = (entry: HTMLElement) => {
       const activeIndex = entries.indexOf(entry);
@@ -74,7 +31,9 @@ export default function TimelineSection() {
     };
 
     const syncActiveEntry = () => {
-      const viewportAnchor = window.innerHeight * 0.52;
+      const activationAnchor = mobileTimeline
+        ? progress.getBoundingClientRect().bottom
+        : window.innerHeight * 0.52;
       let reachedEntry = entries[0];
 
       entries.forEach((entry) => {
@@ -84,7 +43,7 @@ export default function TimelineSection() {
           ? dotRect.top + dotRect.height / 2
           : entry.getBoundingClientRect().top;
 
-        if (entryAnchor <= viewportAnchor + 1) reachedEntry = entry;
+        if (entryAnchor <= activationAnchor + 1) reachedEntry = entry;
       });
 
       if (reachedEntry) setActiveEntry(reachedEntry);
@@ -108,15 +67,9 @@ export default function TimelineSection() {
           start: 'top 52%',
           end: 'bottom 52%',
           scrub: true,
+          onUpdate: syncActiveEntry,
+          onRefresh: syncActiveEntry,
         },
-      });
-
-      ScrollTrigger.create({
-        trigger: track,
-        start: 'top bottom',
-        end: 'bottom top',
-        onUpdate: syncActiveEntry,
-        onRefresh: syncActiveEntry,
       });
 
       entries.forEach((entry) => {
