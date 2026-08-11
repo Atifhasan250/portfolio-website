@@ -868,7 +868,7 @@
   .project-card-image {
     margin-left: -2rem;
     margin-right: -2rem;
-    margin-top: -2rem;
+    margin-top: 0;
   }
 
   .project-image-trigger {
@@ -882,6 +882,8 @@
 
   .project-card-media {
     display: block;
+    /* Anchor screenshots to the top edge; any overflow is cropped only from below. */
+    object-position: 50% 0% !important;
   }
 
   /* Placeholder when a project has no image yet */
@@ -1203,7 +1205,7 @@
     .project-card-image {
       margin-left: -1.5rem;
       margin-right: -1.5rem;
-      margin-top: -1.5rem;
+      margin-top: 0;
     }
 
     .project-image-trigger {
