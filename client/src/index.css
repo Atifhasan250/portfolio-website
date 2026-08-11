@@ -509,6 +509,8 @@
   .timeline-entry-year {
     display: block;
     color: var(--color-text-heading);
+    font-family: 'Poppins', sans-serif;
+    font-variant-numeric: tabular-nums;
     font-size: clamp(1.8rem, 3.2vw, 2.75rem);
     font-weight: 700;
     line-height: 1;
@@ -516,7 +518,6 @@
   }
 
   .timeline-entry-year.is-range {
-    font-size: clamp(1.35rem, 2.3vw, 2rem);
     letter-spacing: -0.05em;
     white-space: nowrap;
   }
@@ -601,7 +602,7 @@
     }
 
     .timeline-entry {
-      grid-template-columns: 1.55rem minmax(0, 1fr);
+      grid-template-columns: 2.5rem minmax(0, 1fr);
       padding-bottom: 4rem;
     }
 
@@ -620,10 +621,6 @@
       letter-spacing: -0.045em;
     }
 
-    .timeline-entry-year.is-range {
-      font-size: 1.2rem;
-    }
-
     .timeline-entry-type {
       margin-top: 0;
       font-size: 0.62rem;
@@ -633,8 +630,10 @@
     .timeline-dot {
       grid-column: 1;
       grid-row: 1 / span 2;
+      justify-self: start;
       width: 0.75rem;
       height: 0.75rem;
+      margin-left: 0.4rem;
       margin-top: 0.375rem;
     }
 
