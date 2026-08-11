@@ -1175,6 +1175,10 @@
       padding: 1.5rem;
     }
 
+    .project-card {
+      padding-top: 0;
+    }
+
     .cta-button,
     .outline-button {
       width: auto;
